@@ -46,6 +46,20 @@ async function build(): Promise<string> {
       .replace('__DEV__', JSON.stringify(!prod))
       .replace('__RELOAD__', JSON.stringify(reloadUrl)),
   );
+  if (prod) {
+    await writeFile(
+      join(root, 'public', '_headers'),
+      [
+        '/mygo/catalog.*.wasm',
+        '  Cache-Control: public, max-age=31536000, immutable',
+        '/*',
+        `  Link: </mygo/${name}>; rel=prefetch; as=fetch; crossorigin`,
+        '/mygo',
+        '  ! Link',
+        '',
+      ].join('\n'),
+    );
+  }
   const mb = (bytes.length / 1024 / 1024).toFixed(1);
   console.log(`[mygo] ${name} ${mb} MB in ${Math.round(performance.now() - started)} ms`);
   return id;

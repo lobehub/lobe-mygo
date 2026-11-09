@@ -70,8 +70,29 @@
           loaded ??= event.id
         })
       }
-      WebAssembly.instantiateStreaming(fetch("/mygo/" + wasm, dev ? { cache: "no-store" } : {}), go.importObject)
-        .then((r) => go.run(r.instance))
+      const url = "/mygo/" + wasm
+      const host = (() => {
+        try {
+          return !dev && parent !== window && parent.location.origin === location.origin ? parent : null
+        } catch {
+          return null
+        }
+      })()
+      // Compiled in the docs page's realm so every demo frame, including those mounted after a
+      // client-side navigation, instantiates one shared module instead of compiling 20 MB each;
+      // a fetch started in this frame would also be aborted when the frame unmounts mid-compile.
+      const shared = () => {
+        const cache = (host.__mygoModules ??= {})
+        cache[wasm] ??= host.WebAssembly.compileStreaming(host.fetch(url)).catch((e) => {
+          delete cache[wasm]
+          throw e
+        })
+        return cache[wasm].then((module) => WebAssembly.instantiate(module, go.importObject))
+      }
+      const local = () =>
+        WebAssembly.instantiateStreaming(fetch(url, dev ? { cache: "no-store" } : {}), go.importObject).then((r) => r.instance)
+      ;(host ? shared().catch(local) : local())
+        .then((instance) => go.run(instance))
         .then(() => showError(`The demo "${demo}" stopped. The browser console has the reason.`))
         .catch((e) => showError("The preview did not load: " + e))
     </script>

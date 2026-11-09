@@ -1,3 +1,5 @@
+import { mygoFrameSrc } from '../components/mygoFrame';
+
 export function ShowcaseFrame() {
   return (
     <div className="mygo-showcase">
@@ -6,7 +8,7 @@ export function ShowcaseFrame() {
       <iframe
         className="mygo-showcase-live"
         loading="lazy"
-        src="/mygo/index.html?demo=home%2Fshowcase"
+        src={mygoFrameSrc('home/showcase')}
         title="A chat app built with Lobe MyGo, running live through WebAssembly"
       />
     </div>

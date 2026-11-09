@@ -2,6 +2,7 @@ import { ActionIcon, SyntaxHighlighter } from '@lobehub/ui';
 import { Code2, Copy, ExternalLink } from 'lucide-react';
 import { type CSSProperties, useState } from 'react';
 
+import { mygoFrameSrc } from './mygoFrame';
 import { useMygoReload } from './mygoReload';
 
 interface GoDemoProps {
@@ -64,7 +65,7 @@ const buildError: CSSProperties = {
 export function GoDemo({ height, name, scrollable = false, source, title }: GoDemoProps) {
   const [expanded, setExpanded] = useState(false);
   const reload = useMygoReload();
-  const src = `/mygo/index.html?demo=${encodeURIComponent(name)}${scrollable ? '&scroll=1' : ''}`;
+  const src = mygoFrameSrc(name, scrollable);
   const frameSrc = reload.version > 0 ? `${src}&v=${reload.version}` : src;
 
   return (

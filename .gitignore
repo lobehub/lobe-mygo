@@ -6,3 +6,4 @@ catalog/*/api.json
 dist/
 react-router.config.mjs
 .wrangler/
+public/_headers
