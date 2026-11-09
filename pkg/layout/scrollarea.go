@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/egoist/mygo/ui"
+	"github.com/lobehub/lobe-mygo/pkg/internal/l10n"
 	"github.com/lobehub/lobe-mygo/pkg/motion"
 	"github.com/lobehub/lobe-mygo/pkg/theme"
 )
@@ -98,7 +99,7 @@ func scrollBar(c *ui.Context, tk *theme.Tokens, root ui.Element, state *ui.Scrol
 	offset := barInset + (track-length)*at/limit
 
 	strip.Children(func() {
-		thumb := ui.ButtonBase(c).Absolute().Label("Scroll").Background(tk.TextQuaternary)
+		thumb := ui.ButtonBase(c).Absolute().Label(l10n.Text(c, "scrollThumb")).Background(tk.TextQuaternary)
 		dx, dy, held := thumb.Dragged()
 		if held && track > length {
 			if vertical {

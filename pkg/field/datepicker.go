@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/egoist/mygo/ui"
+	"github.com/lobehub/lobe-mygo/pkg/internal/l10n"
 	"github.com/lobehub/lobe-mygo/pkg/lucide"
 	"github.com/lobehub/lobe-mygo/pkg/overlay"
 	"github.com/lobehub/lobe-mygo/pkg/theme"
@@ -40,7 +41,7 @@ func DatePicker(c *ui.Context, value *time.Time, p DatePickerProps) ui.Element {
 		format = "2006-01-02"
 	}
 	if placeholder == "" {
-		placeholder = "Select date"
+		placeholder = l10n.Text(c, "datePickerPlaceholder")
 	}
 	box := ui.Row(c).FillWidth().AlignItems(ui.Center)
 	open := ui.Local(box, "open", func() bool { return false })
@@ -65,7 +66,7 @@ func DatePicker(c *ui.Context, value *time.Time, p DatePickerProps) ui.Element {
 		})
 		styleField(trigger, tk, p.Variant, false, *open || trigger.Focused())
 		if clearable {
-			x := ui.ButtonBase(c).Label("Clear").Absolute().Right(10).Size(16, 16).Radius(8).Center().
+			x := ui.ButtonBase(c).Label(l10n.Text(c, "clear")).Absolute().Right(10).Size(16, 16).Radius(8).Center().
 				Cursor(ui.CursorPointer).TextColor(tk.TextTertiary)
 			if x.Hovered() {
 				x.TextColor(tk.TextSecondary)

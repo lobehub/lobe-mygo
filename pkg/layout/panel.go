@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/egoist/mygo/ui"
+	"github.com/lobehub/lobe-mygo/pkg/internal/l10n"
 	"github.com/lobehub/lobe-mygo/pkg/lucide"
 	"github.com/lobehub/lobe-mygo/pkg/motion"
 	"github.com/lobehub/lobe-mygo/pkg/theme"
@@ -30,6 +31,9 @@ type DraggablePanelProps struct {
 	CollapseThreshold float32
 	// NoToggle hides the button on the seam that collapses and expands the panel.
 	NoToggle bool
+	// NoBorder leaves the seam undrawn at rest, as Lobe UI's showBorder false: it still lights while
+	// hovered and resized.
+	NoBorder bool
 }
 
 type panelDrag struct {
@@ -71,7 +75,7 @@ func DraggablePanel(c *ui.Context, size *float32, expanded *bool, p DraggablePan
 			body.Children(content)
 		})
 
-		handle := edge(ui.ButtonBase(c).Absolute(), p.Placement, -4, 8).Role(ui.RoleSeparator).Label("Resize panel")
+		handle := edge(ui.ButtonBase(c).Absolute(), p.Placement, -4, 8).Role(ui.RoleSeparator).Label(l10n.Text(c, "panelResize"))
 		if horizontal {
 			handle.Cursor(ui.CursorResizeColumn)
 		} else {
@@ -79,6 +83,9 @@ func DraggablePanel(c *ui.Context, size *float32, expanded *bool, p DraggablePan
 		}
 		dx, dy, held = handle.Dragged()
 		seam := tk.BorderSecondary
+		if p.NoBorder {
+			seam = tk.BorderSecondary.Alpha(0)
+		}
 		switch {
 		case held:
 			seam = tk.Primary
@@ -154,9 +161,9 @@ func edge(e ui.Element, placement Placement, offset, thickness float32) ui.Eleme
 }
 
 func panelToggle(c *ui.Context, tk *theme.Tokens, root ui.Element, expanded *bool, placement Placement) {
-	label, icon := "Collapse panel", collapseIcon(placement, *expanded)
+	label, icon := l10n.Text(c, "panelCollapse"), collapseIcon(placement, *expanded)
 	if !*expanded {
-		label = "Expand panel"
+		label = l10n.Text(c, "panelExpand")
 	}
 	offset := float32(-8)
 	if !*expanded {

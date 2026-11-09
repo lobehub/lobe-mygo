@@ -11,7 +11,7 @@ React-only props (`className`, `classNames`, `styles`, `ref`, `as`, controlled/`
 
 ## Cross-cutting
 
-- [ ] **P1** Built-in texts are English only (Form "This field is required" / "Unsaved changes", Image viewer labels, Pagination, Empty, HotkeyInput). Lobe ships `en` and `zh-CN`; add a locale table and a `Texts` override where Lobe has `texts`.
+- [x] **P1** Built-in texts in `en` and `zh-Hans` through the `lobe` library catalog (`pkg/internal/l10n`); apps override with `lobe.<key>`. A `Texts` override is still missing where Lobe has `texts`.
 - [ ] **P2** `shadow` on the input family (Input, TextArea, InputNumber, InputOTP, Select, SearchBar, AutoComplete, HotkeyInput, Segmented).
 - [ ] **P2** `loading` on Button, ActionIcon, Switch and Select.
 - [ ] **mygo** `glass` (backdrop blur) on Block, ActionIcon, ActionIconGroup, Alert, Segmented and the image viewer's toolbar.
@@ -25,7 +25,8 @@ React-only props (`className`, `classNames`, `styles`, `ref`, `as`, controlled/`
 
 ### ActionIcon
 - [ ] **P2** `loading`, `spin` (turning glyph), `disabled` as a prop (only the element's `Disabled` today).
-- [ ] **P3** `blockSize` / `borderRadius` overrides, `outdent` for borderless icons.
+- [x] **P3** `blockSize` and numeric `size` (`BlockSize`, `GlyphSize`).
+- [ ] **P3** `borderRadius` override, `outdent` for borderless icons.
 
 ### ActionIconGroup
 - [ ] **P3** `actionIconProps` passed to every icon.
@@ -280,8 +281,10 @@ Not started; see below.
 ## Layout
 
 ### DraggablePanel
-- [ ] **P2** `top` / `bottom` placements, `mode: 'float'`, `showBorder: false`.
+- [x] **P2** `showBorder: false` (`NoBorder`).
+- [ ] **P2** `top` / `bottom` placements, `mode: 'float'`.
 - [ ] **P3** `DraggablePanel.Header` (`title`, `extra`), `showHandleWideArea`, `showHandleWhenCollapsed`.
+- [ ] **P2** The resize handle stays live while the panel is collapsed: dragging the 8 DIP strip at the edge changes the hidden size and covers the neighbour's edge (seen in `examples/desktop`). Disable it, or let a drag there expand the panel.
 
 ### ScrollArea
 - [ ] **P3** `corner` slot, `disableContentFit`.

@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/egoist/mygo/ui"
+	"github.com/lobehub/lobe-mygo/pkg/internal/l10n"
 	"github.com/lobehub/lobe-mygo/pkg/lucide"
 	"github.com/lobehub/lobe-mygo/pkg/theme"
 )
@@ -66,7 +67,8 @@ func Calendar(c *ui.Context, value *time.Time, p CalendarProps) ui.Element {
 			case modeMonth:
 				pickGrid(c, tk, 3, 12, func(i int) (string, string, bool, bool) {
 					m := time.Month(i + 1)
-					return m.String()[:3], m.String()[:3], true, st.view.Month() == m
+					name := monthName(c, m)
+					return name, name, true, st.view.Month() == m
 				}, func(i int) {
 					st.view = time.Date(st.view.Year(), time.Month(i+1), 1, 0, 0, 0, 0, time.Local)
 					st.mode = modeDate
@@ -96,7 +98,7 @@ func Calendar(c *ui.Context, value *time.Time, p CalendarProps) ui.Element {
 				if b.Clicked() {
 					choose(today)
 				}
-				b.Children(func() { ui.Text(c, "Today") })
+				b.Children(func() { ui.Text(c, l10n.Text(c, "calendarToday")) })
 			})
 		}
 	})
@@ -108,35 +110,50 @@ func calendarHeader(c *ui.Context, tk *theme.Tokens, st *calendarState) {
 	ui.Row(c).Gap(2).AlignItems(ui.Center).Padding(12, 12, 4, 12).Children(func() {
 		switch st.mode {
 		case modeYear:
-			headerButton(c, tk, lucide.ChevronsLeft(), "Previous decade", func() { shift(-10, 0) })
+			headerButton(c, tk, lucide.ChevronsLeft(), l10n.Text(c, "calendarPreviousDecade"), func() { shift(-10, 0) })
 		default:
-			headerButton(c, tk, lucide.ChevronsLeft(), "Previous year", func() { shift(-1, 0) })
+			headerButton(c, tk, lucide.ChevronsLeft(), l10n.Text(c, "calendarPreviousYear"), func() { shift(-1, 0) })
 		}
 		if st.mode == modeDate {
-			headerButton(c, tk, lucide.ChevronLeft(), "Previous month", func() { shift(0, -1) })
+			headerButton(c, tk, lucide.ChevronLeft(), l10n.Text(c, "calendarPreviousMonth"), func() { shift(0, -1) })
 		}
 		ui.Row(c).Grow(1).MinWidth(0).Gap(4).Justify(ui.Center).FontWeight(600).FontSize(14).Children(func() {
 			switch st.mode {
 			case modeDate:
-				viewButton(c, tk, st.view.Month().String()[:3], func() { st.mode = modeMonth })
-				viewButton(c, tk, strconv.Itoa(st.view.Year()), func() { st.mode = modeYear })
+				month := func() { viewButton(c, tk, monthName(c, st.view.Month()), func() { st.mode = modeMonth }) }
+				monthFirst := l10n.Text(c, "calendarMonthFirst") == "true"
+				if monthFirst {
+					month()
+				}
+				viewButton(c, tk, yearName(c, st.view.Year()), func() { st.mode = modeYear })
+				if !monthFirst {
+					month()
+				}
 			case modeMonth:
-				viewButton(c, tk, strconv.Itoa(st.view.Year()), func() { st.mode = modeYear })
+				viewButton(c, tk, yearName(c, st.view.Year()), func() { st.mode = modeYear })
 			case modeYear:
 				start := st.view.Year() / 10 * 10
 				ui.Text(c, strconv.Itoa(start)+"-"+strconv.Itoa(start+9)).Padding(2, 4)
 			}
 		})
 		if st.mode == modeDate {
-			headerButton(c, tk, lucide.ChevronRight(), "Next month", func() { shift(0, 1) })
+			headerButton(c, tk, lucide.ChevronRight(), l10n.Text(c, "calendarNextMonth"), func() { shift(0, 1) })
 		}
 		switch st.mode {
 		case modeYear:
-			headerButton(c, tk, lucide.ChevronsRight(), "Next decade", func() { shift(10, 0) })
+			headerButton(c, tk, lucide.ChevronsRight(), l10n.Text(c, "calendarNextDecade"), func() { shift(10, 0) })
 		default:
-			headerButton(c, tk, lucide.ChevronsRight(), "Next year", func() { shift(1, 0) })
+			headerButton(c, tk, lucide.ChevronsRight(), l10n.Text(c, "calendarNextYear"), func() { shift(1, 0) })
 		}
 	})
+}
+
+func monthName(c *ui.Context, m time.Month) string {
+	return l10n.Format(c, "calendarMonth", map[string]any{"month": strconv.Itoa(int(m))})
+}
+
+func yearName(c *ui.Context, y int) string {
+	return l10n.Format(c, "calendarYear", map[string]any{"year": strconv.Itoa(y)})
 }
 
 func headerButton(c *ui.Context, tk *theme.Tokens, glyph *ui.SVG, label string, do func()) {
@@ -189,7 +206,7 @@ func dayGrid(c *ui.Context, tk *theme.Tokens, value *time.Time, st *calendarStat
 	grid.Children(func() {
 		ui.Row(c).Children(func() {
 			for i := range 7 {
-				name := time.Weekday((int(p.WeekStart) + i) % 7).String()[:2]
+				name := l10n.Format(c, "calendarWeekday", map[string]any{"day": strconv.Itoa((int(p.WeekStart) + i) % 7)})
 				ui.Text(c.Key(i), name).Width(cell).Height(28).TextAlign(ui.Center).FontSize(12).TextColor(tk.TextTertiary).
 					LineHeight(28.0 / 12)
 			}

@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/egoist/mygo/ui"
+	"github.com/lobehub/lobe-mygo/pkg/internal/l10n"
 	"github.com/lobehub/lobe-mygo/pkg/lucide"
 	"github.com/lobehub/lobe-mygo/pkg/theme"
 )
@@ -90,11 +91,11 @@ func InputNumber(c *ui.Context, value *float64, p InputNumberProps) ui.Element {
 		draft.focused = focused
 		if !p.NoControls {
 			ui.Column(c).Shrink(0).Margin(0, -6, 0, 0).Children(func() {
-				if numberControl(c, tk, p.Size, lucide.ChevronUp(), "Increase") {
+				if numberControl(c, tk, p.Size, lucide.ChevronUp(), l10n.Text(c, "numberIncrease")) {
 					set(*value + step)
 					draft.text = format(*value)
 				}
-				if numberControl(c, tk, p.Size, lucide.ChevronDown(), "Decrease") {
+				if numberControl(c, tk, p.Size, lucide.ChevronDown(), l10n.Text(c, "numberDecrease")) {
 					set(*value - step)
 					draft.text = format(*value)
 				}
@@ -136,9 +137,9 @@ func InputPassword(c *ui.Context, value *string, p InputProps) ui.Element {
 		if !*visible {
 			input.Password()
 		}
-		label, glyph := "Show password", lucide.EyeOff()
+		label, glyph := l10n.Text(c, "showPassword"), lucide.EyeOff()
 		if *visible {
-			label, glyph = "Hide password", lucide.Eye()
+			label, glyph = l10n.Text(c, "hidePassword"), lucide.Eye()
 		}
 		b := ui.ButtonBase(c).Label(label).Center().Shrink(0).Cursor(ui.CursorPointer).
 			TextColor(tk.TextTertiary).Transition(optionTransition)

@@ -5,6 +5,7 @@ import (
 
 	"github.com/egoist/mygo/ui"
 	"github.com/lobehub/lobe-mygo/pkg/action"
+	"github.com/lobehub/lobe-mygo/pkg/internal/l10n"
 	"github.com/lobehub/lobe-mygo/pkg/lucide"
 	"github.com/lobehub/lobe-mygo/pkg/motion"
 	"github.com/lobehub/lobe-mygo/pkg/theme"
@@ -35,13 +36,13 @@ func SubmitFooter(c *ui.Context, f Host, p SubmitFooterProps) ui.Element {
 	h := f.formHost()
 	texts := p.Texts
 	if texts.Submit == "" {
-		texts.Submit = "Submit"
+		texts.Submit = l10n.Text(c, "submit")
 	}
 	if texts.Reset == "" {
-		texts.Reset = "Reset"
+		texts.Reset = l10n.Text(c, "reset")
 	}
 	if texts.Unsaved == "" {
-		texts.Unsaved = "Unsaved changes"
+		texts.Unsaved = l10n.Text(c, "formUnsaved")
 	}
 	dirty := h.dirty != nil && h.dirty()
 	content := func(round bool) {

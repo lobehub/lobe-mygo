@@ -5,6 +5,7 @@ import (
 
 	"github.com/egoist/mygo/ui"
 	"github.com/lobehub/lobe-mygo/pkg/display"
+	"github.com/lobehub/lobe-mygo/pkg/internal/l10n"
 	"github.com/lobehub/lobe-mygo/pkg/lucide"
 	"github.com/lobehub/lobe-mygo/pkg/theme"
 )
@@ -39,7 +40,7 @@ func SearchBar(c *ui.Context, query *string, p SearchBarProps) ui.Element {
 	}
 	placeholder := p.Placeholder
 	if placeholder == "" {
-		placeholder = "Type keywords..."
+		placeholder = l10n.Text(c, "searchPlaceholder")
 	}
 
 	root := fieldRow(c, tk, p.Size).Gap(4)
@@ -66,7 +67,7 @@ func SearchBar(c *ui.Context, query *string, p SearchBarProps) ui.Element {
 		}
 		switch {
 		case *query != "":
-			clear := ui.ButtonBase(c).Label("Clear").Size(16, 16).Radius(8).Center().Shrink(0).
+			clear := ui.ButtonBase(c).Label(l10n.Text(c, "clear")).Size(16, 16).Radius(8).Center().Shrink(0).
 				Cursor(ui.CursorPointer).TextColor(tk.TextTertiary)
 			if clear.Hovered() {
 				clear.TextColor(tk.TextSecondary)

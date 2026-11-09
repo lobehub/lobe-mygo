@@ -4,6 +4,7 @@ import (
 	"github.com/egoist/mygo/ui"
 	"github.com/lobehub/lobe-mygo/pkg/action"
 	"github.com/lobehub/lobe-mygo/pkg/display"
+	"github.com/lobehub/lobe-mygo/pkg/internal/l10n"
 	"github.com/lobehub/lobe-mygo/pkg/lucide"
 	"github.com/lobehub/lobe-mygo/pkg/motion"
 	"github.com/lobehub/lobe-mygo/pkg/theme"
@@ -37,9 +38,9 @@ func Burger(c *ui.Context, opened *bool, p BurgerProps) ui.Element {
 	if header <= 0 {
 		header = 64
 	}
-	icon, label := lucide.Menu(), "Open menu"
+	icon, label := lucide.Menu(), l10n.Text(c, "menuOpen")
 	if *opened {
-		icon, label = lucide.X(), "Close menu"
+		icon, label = lucide.X(), l10n.Text(c, "menuClose")
 	}
 	toggle := action.ActionIcon(c, icon, action.ActionIconProps{Size: p.Size, Variant: p.Variant}).Label(label)
 	if toggle.Clicked() {
@@ -115,7 +116,7 @@ func burgerPanel(c *ui.Context, tk *theme.Tokens, anchor ui.Element, opened *boo
 func burgerContent(c *ui.Context, tk *theme.Tokens, opened *bool, header float32, p BurgerProps) {
 	if p.Fullscreen {
 		ui.Row(c).Height(header).PaddingX(12).AlignItems(ui.Center).Justify(ui.End).Shrink(0).Children(func() {
-			if action.ActionIcon(c, lucide.X(), action.ActionIconProps{Size: p.Size}).Label("Close menu").Clicked() {
+			if action.ActionIcon(c, lucide.X(), action.ActionIconProps{Size: p.Size}).Label(l10n.Text(c, "menuClose")).Clicked() {
 				*opened = false
 			}
 		})

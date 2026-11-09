@@ -27,8 +27,6 @@ const (
 	onDeps
 )
 
-const requiredText = "This field is required"
-
 // Form keeps what a form knows besides its values: the values it started from, which fields were
 // touched, their errors and the checks still running. The app edits Values directly, binding its
 // controls to its fields.
@@ -94,10 +92,11 @@ type host struct {
 }
 
 type viewSettings struct {
-	variant      Variant
-	layout       Layout
-	itemMinWidth float32
-	validateOn   ValidateOn
+	variant             Variant
+	layout              Layout
+	itemMinWidth        float32
+	itemMinWidthPercent float32
+	validateOn          ValidateOn
 }
 
 func (h *host) formHost() *host { return h }
@@ -180,10 +179,7 @@ func (h *host) run(name string, fs *fieldState) {
 	p := fs.p
 	switch {
 	case p.Required && isEmpty(p.Value):
-		fs.err = requiredText
-		if p.RequiredText != "" {
-			fs.err = p.RequiredText
-		}
+		fs.err = p.RequiredText
 		return
 	case p.Validate != nil:
 		if err := p.Validate(); err != "" {

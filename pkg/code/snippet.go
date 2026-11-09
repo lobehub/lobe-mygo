@@ -29,7 +29,7 @@ func Snippet(c *ui.Context, src string, p SnippetProps) ui.Element {
 	tk := theme.TokensOf(c)
 	src = strings.TrimSpace(src)
 	root := ui.Row(c).AlignItems(ui.Center).Gap(8).Height(38).Padding(0, 8, 0, 12).
-		Radius(tk.BorderRadius).Clip().Role(ui.RoleGroup).Label(groupLabel(p.Language))
+		Radius(tk.BorderRadius).Clip().Role(ui.RoleGroup).Label(groupLabel(c, p.Language))
 	switch p.Variant {
 	case Filled:
 		root.Background(tk.FillTertiary)

@@ -382,3 +382,104 @@ func TestAsyncErrorStaysWhileRechecking(t *testing.T) {
 	}
 	close(release)
 }
+
+func layoutTester(width int, p Props[profile], groups func(c *ui.Context, f *Form[profile])) *ui.Tester {
+	f := New(profile{})
+	return ui.NewTester(func(c *ui.Context) {
+		theme.Apply(c)
+		ui.Column(c).Padding(20).Width(float32(width - 40)).Children(func() {
+			View(c, f, p, func() { groups(c, f) })
+		})
+	}, width, 600)
+}
+
+func stretchBox(c *ui.Context, label string) {
+	ui.Box(c).AlignSelf(ui.Stretch).Height(10).Label(label)
+}
+
+func TestGroupDescSitsUnderItsTitle(t *testing.T) {
+	tt := layoutTester(640, Props[profile]{Variant: Filled}, func(c *ui.Context, f *Form[profile]) {
+		Group(c, f, GroupProps{Title: "Profile", Desc: "Who you are"}, func() {})
+	})
+	title, _ := tt.Find("Profile")
+	desc, _ := tt.Find("Who you are")
+	if desc.Y < title.Y+title.H-0.5 || abs(desc.X-title.X) > 0.5 {
+		t.Errorf("desc %+v, want it under the title %+v as Lobe UI", desc, title)
+	}
+}
+
+func TestGroupWithoutTitleHasNoHeader(t *testing.T) {
+	tt := layoutTester(640, Props[profile]{Variant: Filled}, func(c *ui.Context, f *Form[profile]) {
+		Group(c, f, GroupProps{Fixed: true}, func() {
+			Field(c, f, FieldProps{Label: "Name"}, func() { stretchBox(c, "box") })
+		})
+	})
+	label, _ := tt.Find("Name")
+	if label.Y > 20+3+1+16+8 {
+		t.Errorf("first label at y %v, want no header row above it", label.Y)
+	}
+}
+
+func TestFieldLabelAndDescSpacingMatchLobeUI(t *testing.T) {
+	tt := layoutTester(640, Props[profile]{}, func(c *ui.Context, f *Form[profile]) {
+		Field(c, f, FieldProps{Label: "Name", Desc: "Shown to others"}, func() { stretchBox(c, "box") })
+	})
+	label, _ := tt.Find("Name")
+	desc, _ := tt.Find("Shown to others")
+	if gap := desc.Y - (label.Y + label.H); abs(gap-8) > 0.5 {
+		t.Errorf("label %+v desc %+v, want an 8 DIP gap as Lobe UI", label, desc)
+	}
+}
+
+func TestFieldMinWidthOverridesItemMinWidth(t *testing.T) {
+	tt := layoutTester(640, Props[profile]{ItemMinWidth: 300}, func(c *ui.Context, f *Form[profile]) {
+		Field(c, f, FieldProps{Label: "Name", MinWidth: 120}, func() { stretchBox(c, "box") })
+	})
+	box, _ := tt.Find("box")
+	if abs(box.W-120) > 0.5 {
+		t.Errorf("control %v wide, want the field's 120 over the form's 300", box.W)
+	}
+}
+
+func TestItemMinWidthPercentTakesAShareOfTheRow(t *testing.T) {
+	tt := layoutTester(940, Props[profile]{ItemMinWidth: 240, ItemMinWidthPercent: 34}, func(c *ui.Context, f *Form[profile]) {
+		Field(c, f, FieldProps{Label: "Name"}, func() { stretchBox(c, "box") })
+	})
+	tt.Frame()
+	box, _ := tt.Find("box")
+	row := float32(860)
+	if want := row * 0.34; abs(box.W-want) > 1 {
+		t.Errorf("control %v wide, want 34%% of the %v row = %v", box.W, row, want)
+	}
+}
+
+func TestPropsGapSpacesGroups(t *testing.T) {
+	second := func(gap float32) float32 {
+		tt := layoutTester(640, Props[profile]{Variant: Filled, Gap: gap}, func(c *ui.Context, f *Form[profile]) {
+			Group(c, f, GroupProps{Title: "One", Fixed: true}, func() { Field(c, f, FieldProps{Label: "A"}, func() { stretchBox(c, "a") }) })
+			Group(c, f, GroupProps{Title: "Two", Fixed: true}, func() { Field(c, f, FieldProps{Label: "B"}, func() { stretchBox(c, "b") }) })
+		})
+		two, _ := tt.Find("Two")
+		return two.Y
+	}
+	if d := second(36) - second(0); abs(d-20) > 0.5 {
+		t.Errorf("a 36 gap moved the second group by %v, want 20 more than the default 16", d)
+	}
+}
+
+func TestFixedGroupTitleIsNotDimmed(t *testing.T) {
+	tt := layoutTester(640, Props[profile]{Variant: Filled}, func(c *ui.Context, f *Form[profile]) {
+		Group(c, f, GroupProps{Title: "Profile", Fixed: true}, func() {})
+	})
+	r, _ := tt.Find("Profile")
+	img := tt.Image()
+	darkest := 255
+	for y := int(r.Y); y < int(r.Y+r.H); y++ {
+		for x := int(r.X); x < int(r.X+r.W); x++ {
+			darkest = min(darkest, int(img.RGBAAt(x, y).R))
+		}
+	}
+	if darkest > 60 {
+		t.Errorf("darkest title pixel %d, want the colorText title of a fixed group, not a dimmed one", darkest)
+	}
+}

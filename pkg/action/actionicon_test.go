@@ -126,3 +126,33 @@ func TestActionIconTitleShowsTheLobeTooltip(t *testing.T) {
 		t.Errorf("tooltip surface above the icon %+v, want BgElevated %+v", got, tk.BgElevated)
 	}
 }
+
+func TestActionIconCustomSizes(t *testing.T) {
+	for _, c := range []struct {
+		name       string
+		p          ActionIconProps
+		box, glyph float32
+	}{
+		{"glyph only", ActionIconProps{GlyphSize: 16}, 28.8, 16},
+		{"block and glyph", ActionIconProps{BlockSize: 28, GlyphSize: 16}, 28, 16},
+	} {
+		h := newActionIconHarness(t, c.p)
+		b := h.bounds()
+		if b.W != c.box || b.H != c.box {
+			t.Errorf("%s: box %vx%v, want %v", c.name, b.W, b.H, c.box)
+		}
+		mid := b.Y + b.H/2
+		left, right := float32(-1), float32(-1)
+		for x := b.X; x < b.X+b.W; x += 0.25 {
+			if px := h.pixel(x, mid); px.R < 200 {
+				if left < 0 {
+					left = x
+				}
+				right = x
+			}
+		}
+		if w := right - left; w < c.glyph-1.5 || w > c.glyph+0.5 {
+			t.Errorf("%s: glyph %v wide, want %v", c.name, w, c.glyph)
+		}
+	}
+}

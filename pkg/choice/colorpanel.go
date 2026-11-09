@@ -7,6 +7,7 @@ import (
 
 	"github.com/egoist/mygo/ui"
 	"github.com/lobehub/lobe-mygo/pkg/field"
+	"github.com/lobehub/lobe-mygo/pkg/internal/l10n"
 	"github.com/lobehub/lobe-mygo/pkg/theme"
 )
 
@@ -70,11 +71,11 @@ func colorPanel(c *ui.Context, tk *theme.Tokens, value *ui.Color, st *pickerStat
 			ui.Column(c).Grow(1).MinWidth(0).Gap(10).Children(func() {
 				opaque := st.hsv
 				opaque.a = 1
-				pickerSlider(c, tk, "Hue", &st.hue, 0, 360, hsva{st.hsv.h, 1, 1, 1}.color(), func(track ui.Element) {
+				pickerSlider(c, tk, l10n.Text(c, "colorHue"), &st.hue, 0, 360, hsva{st.hsv.h, 1, 1, 1}.color(), func(track ui.Element) {
 					track.LinearGradient(ui.LinearGradient{Angle: 90, Stops: rainbow})
 				})
 				if p.Alpha {
-					pickerSlider(c, tk, "Alpha", &st.alpha, 0, 1, *value, func(track ui.Element) {
+					pickerSlider(c, tk, l10n.Text(c, "colorAlpha"), &st.alpha, 0, 1, *value, func(track ui.Element) {
 						track.Children(func() {
 							checkerboard(c, tk, 4)
 							ui.Box(c).Absolute().Fill().LinearGradient(ui.LinearGradient{Angle: 90, Stops: []ui.GradientStop{
@@ -94,7 +95,7 @@ func colorPanel(c *ui.Context, tk *theme.Tokens, value *ui.Color, st *pickerStat
 }
 
 func saturationArea(c *ui.Context, value *ui.Color, st *pickerState) {
-	area := ui.ButtonBase(c).Label("Saturation and brightness").Role(ui.RoleSlider).Size(panelWidth, 150).
+	area := ui.ButtonBase(c).Label(l10n.Text(c, "colorSaturation")).Role(ui.RoleSlider).Size(panelWidth, 150).
 		Radius(10).Cursor(ui.CursorCrosshair).FocusRing(false)
 	x, y, _ := area.PointerPosition()
 	_, _, held := area.Dragged()
@@ -167,7 +168,7 @@ func compare(c *ui.Context, tk *theme.Tokens, value *ui.Color, st *pickerState, 
 	ui.Column(c).Size(28, h).Radius(8).Clip().Shrink(0).InsetShadow(0, 0, 0, 1, tk.FillSecondary).Children(func() {
 		checkerboard(c, tk, 4)
 		ui.Column(c).Absolute().Fill().Children(func() {
-			restore := ui.ButtonBase(c).Label("Restore").Grow(1).FillWidth().Background(st.original).Cursor(ui.CursorPointer)
+			restore := ui.ButtonBase(c).Label(l10n.Text(c, "colorRestore")).Grow(1).FillWidth().Background(st.original).Cursor(ui.CursorPointer)
 			if restore.Clicked() {
 				*value = st.original
 				st.sync(value)
@@ -201,7 +202,7 @@ func colorInputs(c *ui.Context, tk *theme.Tokens, value *ui.Color, st *pickerSta
 			return
 		}
 		ui.Box(c).Width(52).Shrink(0).Children(func() {
-			a := field.Input(c, &st.alphaText, field.InputProps{Size: theme.Small}).Label("Alpha percent").FontFeatures("tnum")
+			a := field.Input(c, &st.alphaText, field.InputProps{Size: theme.Small}).Label(l10n.Text(c, "colorAlphaPercent")).FontFeatures("tnum")
 			af := a.Focused()
 			if a.Submitted() || st.alphaWas && !af {
 				if n, err := strconv.Atoi(strings.TrimSuffix(strings.TrimSpace(st.alphaText), "%")); err == nil {
@@ -221,7 +222,7 @@ func colorInputs(c *ui.Context, tk *theme.Tokens, value *ui.Color, st *pickerSta
 func presets(c *ui.Context, tk *theme.Tokens, value *ui.Color, st *pickerState, colors []ui.Color) {
 	ui.Column(c).Gap(8).Children(func() {
 		ui.Box(c).Height(1).FillWidth().Background(tk.BorderSecondary).Margin(0, 0, 4, 0)
-		ui.Text(c, "Presets").FontSize(11).FontWeight(500).TextColor(tk.TextTertiary).Padding(0, 2)
+		ui.Text(c, l10n.Text(c, "colorPresets")).FontSize(11).FontWeight(500).TextColor(tk.TextTertiary).Padding(0, 2)
 		cell := float32(math.Floor((panelWidth-8*5)/9*100)) / 100
 		ui.Row(c).Wrap().Gap(5).Children(func() {
 			for i, col := range colors {

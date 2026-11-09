@@ -5,6 +5,7 @@ import (
 
 	"github.com/egoist/mygo/ui"
 	"github.com/lobehub/lobe-mygo/pkg/action"
+	"github.com/lobehub/lobe-mygo/pkg/internal/l10n"
 	"github.com/lobehub/lobe-mygo/pkg/lucide"
 	"github.com/lobehub/lobe-mygo/pkg/motion"
 	"github.com/lobehub/lobe-mygo/pkg/theme"
@@ -62,10 +63,10 @@ func Modal(c *ui.Context, open *bool, p ModalProps, content func()) bool {
 			})
 			if !p.NoFooter {
 				ui.Row(c).Gap(8).Padding(12, 16).Justify(ui.End).Children(func() {
-					if action.Button(c, textOr(p.CancelText, "Cancel"), action.ButtonProps{}).Clicked() {
+					if action.Button(c, textOr(p.CancelText, l10n.Text(c, "cancel")), action.ButtonProps{}).Clicked() {
 						*open = false
 					}
-					if action.Button(c, textOr(p.OkText, "OK"), action.ButtonProps{Variant: action.Primary}).Clicked() {
+					if action.Button(c, textOr(p.OkText, l10n.Text(c, "ok")), action.ButtonProps{Variant: action.Primary}).Clicked() {
 						ok = true
 					}
 				})
@@ -79,7 +80,7 @@ func Modal(c *ui.Context, open *bool, p ModalProps, content func()) bool {
 }
 
 func dialogClose(c *ui.Context, tk *theme.Tokens, glyph float32) ui.Element {
-	b := ui.ButtonBase(c).Label("Close").Size(32, 32).Radius(8).Cursor(ui.CursorPointer).Transition(dialogCloseTransition)
+	b := ui.ButtonBase(c).Label(l10n.Text(c, "close")).Size(32, 32).Radius(8).Cursor(ui.CursorPointer).Transition(dialogCloseTransition)
 	if b.Hovered() {
 		b.Background(tk.FillSecondary).TextColor(tk.Text)
 	} else {

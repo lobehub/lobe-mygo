@@ -2,6 +2,7 @@ package choice
 
 import (
 	"github.com/egoist/mygo/ui"
+	"github.com/lobehub/lobe-mygo/pkg/internal/l10n"
 	"github.com/lobehub/lobe-mygo/pkg/lucide"
 	"github.com/lobehub/lobe-mygo/pkg/overlay"
 	"github.com/lobehub/lobe-mygo/pkg/theme"
@@ -106,13 +107,14 @@ func customPicker(c *ui.Context, tk *theme.Tokens, value *ui.Color, p ColorSwatc
 		})
 		ColorPopover(c, chip, value, picker)
 	}
-	add := ui.ButtonBase(c.Key("add")).Label("Custom color").Size(size, size).Radius(radius).Center().Shrink(0).
+	title := l10n.Text(c, "colorCustom")
+	add := ui.ButtonBase(c.Key("add")).Label(title).Size(size, size).Radius(radius).Center().Shrink(0).
 		Cursor(ui.CursorPointer).TextColor(ui.RGB(255, 255, 255)).InsetShadow(0, 0, 0, 1, tk.FillSecondary).
 		ConicGradient(ui.ConicGradient{Stops: hueTurn})
 	if add.Hovered() {
 		add.Shadow(0, 0, 0, 2, tk.Text)
 	}
-	overlay.Tooltip(c, add, "Custom color", overlay.TooltipProps{})
+	overlay.Tooltip(c, add, title, overlay.TooltipProps{})
 	add.Children(func() { ui.Icon(c, lucide.Plus()).FontSize(12) })
 	ColorPopover(c, add, value, picker)
 }

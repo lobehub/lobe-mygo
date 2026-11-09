@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/egoist/mygo/ui"
+	"github.com/lobehub/lobe-mygo/pkg/internal/l10n"
 	"github.com/lobehub/lobe-mygo/pkg/lucide"
 	"github.com/lobehub/lobe-mygo/pkg/motion"
 	"github.com/lobehub/lobe-mygo/pkg/theme"
@@ -208,7 +209,7 @@ func resizeSideNav(dx float32, held bool, width *float32, expanded *bool, d *sid
 
 func sideNavSeam(c *ui.Context, tk *theme.Tokens, root ui.Element, p DraggableSideNavProps) (float32, bool) {
 	seam := ui.ButtonBase(c).Absolute().Top(0).Bottom(0).Width(8).Role(ui.RoleSeparator).
-		Label("Resize side nav").Cursor(ui.CursorResizeColumn)
+		Label(l10n.Text(c, "sideNavResize")).Cursor(ui.CursorResizeColumn)
 	if p.Right {
 		seam.Left(-4)
 	} else {
@@ -232,12 +233,12 @@ func sideNavSeam(c *ui.Context, tk *theme.Tokens, root ui.Element, p DraggableSi
 }
 
 func sideNavHandle(c *ui.Context, tk *theme.Tokens, root ui.Element, expanded *bool, bg ui.Color, p DraggableSideNavProps) {
-	label, icon := "Collapse side nav", lucide.ChevronLeft()
+	label, icon := l10n.Text(c, "sideNavCollapse"), lucide.ChevronLeft()
 	if p.Right {
 		icon = lucide.ChevronRight()
 	}
 	if !*expanded {
-		label = "Expand side nav"
+		label = l10n.Text(c, "sideNavExpand")
 	}
 	b := ui.ButtonBase(c).Label(label).Absolute().TopPercent(50).TranslatePercent(0, -50).Size(16, 54).
 		Background(bg).BorderColor(tk.Border).Cursor(ui.CursorPointer).ZIndex(50)

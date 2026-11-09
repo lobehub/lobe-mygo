@@ -4,6 +4,7 @@ import (
 	"github.com/egoist/mygo/ui"
 	"github.com/lobehub/lobe-mygo/pkg/overlay"
 	"github.com/lobehub/lobe-mygo/pkg/theme"
+	"math"
 )
 
 type ActionIconVariant int
@@ -20,6 +21,11 @@ type ActionIconProps struct {
 	Variant ActionIconVariant
 	// Size sets the box (24, 36 or 44), corner radius and glyph size (14, 20 or 24).
 	Size theme.Size
+	// GlyphSize sets the glyph in DIPs, as Lobe UI's numeric size: the box is 1.8 times it, rounded
+	// by a sixth of the box, unless BlockSize sets the box.
+	GlyphSize float32
+	// BlockSize sets the box in DIPs, rounded by 6, as Lobe UI's size object.
+	BlockSize float32
 	// Active keeps the hover fill, for a toggled or open state.
 	Active bool
 	// Danger colors the glyph with the error color.
@@ -37,6 +43,14 @@ func ActionIcon(c *ui.Context, svg *ui.SVG, p ActionIconProps) ui.Element {
 func StyleActionIcon(c *ui.Context, b ui.Element, svg *ui.SVG, p ActionIconProps) ui.Element {
 	tk := theme.TokensOf(c)
 	box, radius, glyph := actionIconSize(p.Size)
+	if p.GlyphSize > 0 {
+		glyph = p.GlyphSize
+		box = p.GlyphSize * 1.8
+		radius = float32(math.Floor(float64(box / 6)))
+	}
+	if p.BlockSize > 0 {
+		box, radius = p.BlockSize, 6
+	}
 
 	b.Size(box, box).Radius(radius).
 		Cursor(ui.CursorPointer).Transition(buttonTransition)

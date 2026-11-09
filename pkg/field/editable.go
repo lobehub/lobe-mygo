@@ -3,6 +3,7 @@ package field
 import (
 	"github.com/egoist/mygo/ui"
 	"github.com/lobehub/lobe-mygo/pkg/action"
+	"github.com/lobehub/lobe-mygo/pkg/internal/l10n"
 	"github.com/lobehub/lobe-mygo/pkg/lucide"
 	"github.com/lobehub/lobe-mygo/pkg/theme"
 )
@@ -46,7 +47,7 @@ func EditableText(c *ui.Context, value *string, editing *bool, p EditableTextPro
 		if !*editing {
 			ui.Text(c, *value).SingleLine().MinWidth(0)
 			if !p.NoEditIcon {
-				if action.ActionIcon(c, lucide.PenLine(), action.ActionIconProps{Size: theme.Small, Title: "Edit"}).Clicked() {
+				if action.ActionIcon(c, lucide.PenLine(), action.ActionIconProps{Size: theme.Small, Title: l10n.Text(c, "edit")}).Clicked() {
 					*editing, draft.editing, draft.text = true, true, *value
 					c.Invalidate()
 				}
@@ -78,10 +79,10 @@ func EditableText(c *ui.Context, value *string, editing *bool, p EditableTextPro
 			}
 			if draft.text != *value {
 				ui.Row(c).Gap(2).Margin(0, -4, 0, 0).Children(func() {
-					if action.ActionIcon(c, lucide.RotateCcw(), action.ActionIconProps{Size: theme.Small, Title: "Reset"}).Clicked() {
+					if action.ActionIcon(c, lucide.RotateCcw(), action.ActionIconProps{Size: theme.Small, Title: l10n.Text(c, "reset")}).Clicked() {
 						draft.text = *value
 					}
-					if action.ActionIcon(c, lucide.Save(), action.ActionIconProps{Size: theme.Small, Title: "Submit", Variant: action.ActionIconFilled}).Clicked() {
+					if action.ActionIcon(c, lucide.Save(), action.ActionIconProps{Size: theme.Small, Title: l10n.Text(c, "submit"), Variant: action.ActionIconFilled}).Clicked() {
 						save()
 					}
 				})

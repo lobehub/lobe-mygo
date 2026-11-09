@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/egoist/mygo/ui"
+	"github.com/lobehub/lobe-mygo/pkg/internal/l10n"
 	"github.com/lobehub/lobe-mygo/pkg/lucide"
 	"github.com/lobehub/lobe-mygo/pkg/motion"
 	"github.com/lobehub/lobe-mygo/pkg/theme"
@@ -108,7 +109,7 @@ func alertTone(tk *theme.Tokens, t AlertType) (accent ui.Color, icon func() *ui.
 }
 
 func closeButton(c *ui.Context, tk *theme.Tokens) ui.Element {
-	b := ui.ButtonBase(c).Label("Close").Size(32, 32).Radius(tk.BorderRadiusSM).Margin(-6, -4, -6, 0).
+	b := ui.ButtonBase(c).Label(l10n.Text(c, "close")).Size(32, 32).Radius(tk.BorderRadiusSM).Margin(-6, -4, -6, 0).
 		Shrink(0).Cursor(ui.CursorPointer).Transition(closeTransition)
 	if b.Hovered() {
 		b.Background(tk.FillTertiary).TextColor(tk.Text)

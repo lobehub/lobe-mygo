@@ -5,6 +5,7 @@ import (
 	"strconv"
 
 	"github.com/egoist/mygo/ui"
+	"github.com/lobehub/lobe-mygo/pkg/internal/l10n"
 	"github.com/lobehub/lobe-mygo/pkg/lucide"
 	"github.com/lobehub/lobe-mygo/pkg/theme"
 )
@@ -37,7 +38,7 @@ func (v *imageViewer) chrome(c *ui.Context, tk *theme.Tokens, items []viewerItem
 	cx, cy := v.viewport.W/2, v.viewport.H/2
 
 	viewerPill(c, tk).Absolute().Top(16).Right(16).Children(func() {
-		if icon(lucide.X(), "Close") {
+		if icon(lucide.X(), l10n.Text(c, "close")) {
 			v.close()
 		}
 	})
@@ -51,7 +52,7 @@ func (v *imageViewer) chrome(c *ui.Context, tk *theme.Tokens, items []viewerItem
 		ui.Column(c).Absolute().Left(16).Top(0).Bottom(0).Justify(ui.Center).Children(func() {
 			if v.index > 0 {
 				viewerPill(c, tk).Children(func() {
-					if icon(lucide.ChevronLeft(), "Previous image") {
+					if icon(lucide.ChevronLeft(), l10n.Text(c, "imagePrevious")) {
 						v.showIndex(v.index - 1)
 					}
 				})
@@ -60,7 +61,7 @@ func (v *imageViewer) chrome(c *ui.Context, tk *theme.Tokens, items []viewerItem
 		ui.Column(c).Absolute().Right(16).Top(0).Bottom(0).Justify(ui.Center).Children(func() {
 			if v.index < n-1 {
 				viewerPill(c, tk).Children(func() {
-					if icon(lucide.ChevronRight(), "Next image") {
+					if icon(lucide.ChevronRight(), l10n.Text(c, "imageNext")) {
 						v.showIndex(v.index + 1)
 					}
 				})
@@ -69,27 +70,27 @@ func (v *imageViewer) chrome(c *ui.Context, tk *theme.Tokens, items []viewerItem
 	}
 	ui.Row(c).Absolute().Bottom(16).Left(0).Right(0).Justify(ui.Center).Children(func() {
 		viewerPill(c, tk).Padding(4, 6).Children(func() {
-			if icon(lucide.RotateCcw(), "Rotate left") {
+			if icon(lucide.RotateCcw(), l10n.Text(c, "imageRotateLeft")) {
 				v.rotate(-1)
 			}
-			if icon(lucide.RotateCw(), "Rotate right") {
+			if icon(lucide.RotateCw(), l10n.Text(c, "imageRotateRight")) {
 				v.rotate(1)
 			}
-			if icon(lucide.ZoomOut(), "Zoom out") {
+			if icon(lucide.ZoomOut(), l10n.Text(c, "imageZoomOut")) {
 				v.zoomTo(fit, v.scale/zoomStep, cx, cy)
 			}
 			pct := int(math.Round(float64(v.scale / natural * 100)))
 			ui.Row(c).Size(56, 36).Justify(ui.Center).AlignItems(ui.Center).Children(func() {
 				ui.Text(c, strconv.Itoa(pct)+"%").FontSize(12).TextColor(tk.TextTertiary).FontFeatures("tnum")
 			})
-			if icon(lucide.ZoomIn(), "Zoom in") {
+			if icon(lucide.ZoomIn(), l10n.Text(c, "imageZoomIn")) {
 				v.zoomTo(fit, v.scale*zoomStep, cx, cy)
 			}
 			if natural > 1.001 {
 				actual := math.Abs(float64(v.scale-natural)) > 0.01
-				title, svg := "Fit to screen", lucide.Shrink()
+				title, svg := l10n.Text(c, "imageFitToScreen"), lucide.Shrink()
 				if actual {
-					title, svg = "Actual size", lucide.Expand()
+					title, svg = l10n.Text(c, "imageActualSize"), lucide.Expand()
 				}
 				if icon(svg, title) {
 					if actual {
@@ -99,7 +100,7 @@ func (v *imageViewer) chrome(c *ui.Context, tk *theme.Tokens, items []viewerItem
 					}
 				}
 			}
-			if item.onDownload != nil && icon(lucide.Download(), "Download") {
+			if item.onDownload != nil && icon(lucide.Download(), l10n.Text(c, "download")) {
 				item.onDownload(item.src)
 			}
 		})

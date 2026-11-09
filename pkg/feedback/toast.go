@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/egoist/mygo/ui"
+	"github.com/lobehub/lobe-mygo/pkg/internal/l10n"
 	"github.com/lobehub/lobe-mygo/pkg/lucide"
 	"github.com/lobehub/lobe-mygo/pkg/motion"
 	"github.com/lobehub/lobe-mygo/pkg/theme"
@@ -231,7 +232,7 @@ func toastIcon(tk *theme.Tokens, typ string) (func() *ui.SVG, ui.Color) {
 }
 
 func toastClose(c *ui.Context, tk *theme.Tokens, b ui.Element) {
-	b.Label("Close").Size(20, 20).Radius(tk.BorderRadiusSM).Shrink(0).Margin(1, 0, 0, 0).
+	b.Label(l10n.Text(c, "close")).Size(20, 20).Radius(tk.BorderRadiusSM).Shrink(0).Margin(1, 0, 0, 0).
 		Cursor(ui.CursorPointer).Transition(dialogCloseTransition)
 	if b.Hovered() {
 		b.Background(tk.FillSecondary).TextColor(tk.Text)

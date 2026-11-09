@@ -1,11 +1,11 @@
 package nav
 
 import (
-	"fmt"
 	"strconv"
 	"time"
 
 	"github.com/egoist/mygo/ui"
+	"github.com/lobehub/lobe-mygo/pkg/internal/l10n"
 	"github.com/lobehub/lobe-mygo/pkg/lucide"
 	"github.com/lobehub/lobe-mygo/pkg/motion"
 	"github.com/lobehub/lobe-mygo/pkg/theme"
@@ -88,7 +88,7 @@ func Pagination(c *ui.Context, current *int, p PaginationProps) ui.Element {
 		side, fontSize = 24, 12
 	}
 
-	root := ui.Row(c).Gap(4).AlignItems(ui.Center).Label("Pagination")
+	root := ui.Row(c).Gap(4).AlignItems(ui.Center).Label(l10n.Text(c, "pagination"))
 	if p.HideOnSinglePage && count == 1 {
 		return root
 	}
@@ -137,7 +137,7 @@ func Pagination(c *ui.Context, current *int, p PaginationProps) ui.Element {
 			}
 			ui.Text(c, p.ShowTotal(p.Total, from, to)).FontSize(12).TextColor(tk.TextTertiary).Margin(0, 8, 0, 0)
 		}
-		prev := button("Previous page", p.Disabled || *current == 1, false)
+		prev := button(l10n.Text(c, "paginationPrevious"), p.Disabled || *current == 1, false)
 		prev.Children(func() { ui.Icon(c, lucide.ChevronLeft()).FontSize(fontSize + 3) })
 		if prev.Clicked() {
 			goTo(*current - 1)
@@ -145,9 +145,9 @@ func Pagination(c *ui.Context, current *int, p PaginationProps) ui.Element {
 		for _, it := range pageItems(*current, count, buffer) {
 			switch it {
 			case ellipsisPrev, ellipsisNext:
-				label, icon, target := fmt.Sprintf("Next %d pages", jump), lucide.ChevronsRight, *current+jump
+				label, icon, target := l10n.Format(c, "paginationNextPages", map[string]any{"count": jump}), lucide.ChevronsRight, *current+jump
 				if it == ellipsisPrev {
-					label, icon, target = fmt.Sprintf("Previous %d pages", jump), lucide.ChevronsLeft, *current-jump
+					label, icon, target = l10n.Format(c, "paginationPreviousPages", map[string]any{"count": jump}), lucide.ChevronsLeft, *current-jump
 				}
 				e := ui.ButtonBase(c.Key(int(it))).Label(label).Disabled(p.Disabled).Size(side, side).
 					Radius(tk.BorderRadius).Justify(ui.Center).AlignItems(ui.Center)
@@ -181,7 +181,7 @@ func Pagination(c *ui.Context, current *int, p PaginationProps) ui.Element {
 				}
 			}
 		}
-		next := button("Next page", p.Disabled || *current == count, false)
+		next := button(l10n.Text(c, "paginationNext"), p.Disabled || *current == count, false)
 		next.Children(func() { ui.Icon(c, lucide.ChevronRight()).FontSize(fontSize + 3) })
 		if next.Clicked() {
 			goTo(*current + 1)

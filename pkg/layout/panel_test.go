@@ -225,3 +225,20 @@ func TestDraggablePanelToggleShowsOnKeyboardFocus(t *testing.T) {
 		t.Error("toggle hidden while focused from the keyboard")
 	}
 }
+
+func TestDraggablePanelNoBorderHidesTheSeamUntilHovered(t *testing.T) {
+	tk := theme.Light()
+	size, expanded := float32(280), true
+	tt := panelTester(&size, &expanded, DraggablePanelProps{NoBorder: true})
+	tt.Frame()
+	if got := testkit.PixelAt(tt, 800, 520.5, 40); !testkit.Near(got, tk.BgLayout) {
+		t.Errorf("idle seam = %+v, want nothing drawn over %+v", got, tk.BgLayout)
+	}
+	tt.Press(520, 40)
+	tt.Move(515, 40)
+	tt.Advance(time.Second)
+	if got := testkit.PixelAt(tt, 800, 515.5, 40); !testkit.Near(got, tk.Primary) {
+		t.Errorf("seam while resizing = %+v, want Primary %+v", got, tk.Primary)
+	}
+	tt.Release(515, 40)
+}

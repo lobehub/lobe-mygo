@@ -5,6 +5,7 @@ import (
 
 	"github.com/egoist/mygo/ui"
 	"github.com/lobehub/lobe-mygo/pkg/action"
+	"github.com/lobehub/lobe-mygo/pkg/internal/l10n"
 	"github.com/lobehub/lobe-mygo/pkg/lucide"
 	"github.com/lobehub/lobe-mygo/pkg/motion"
 	"github.com/lobehub/lobe-mygo/pkg/theme"
@@ -151,7 +152,7 @@ func sortShiftOf(st *sortState, i int, gap float32) float32 {
 }
 
 func sortHandle(c *ui.Context, st *sortState, i, n int) bool {
-	h := action.ActionIcon(c, lucide.GripVertical(), action.ActionIconProps{Size: theme.Small}).Label("Reorder").Cursor(ui.CursorGrab)
+	h := action.ActionIcon(c, lucide.GripVertical(), action.ActionIconProps{Size: theme.Small}).Label(l10n.Text(c, "sortReorder")).Cursor(ui.CursorGrab)
 	_, dy, held := h.Dragged()
 	switch {
 	case held && st.active != i:

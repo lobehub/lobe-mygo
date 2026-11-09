@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/egoist/mygo/ui"
+	"github.com/lobehub/lobe-mygo/pkg/internal/l10n"
 	"github.com/lobehub/lobe-mygo/pkg/lucide"
 	"github.com/lobehub/lobe-mygo/pkg/theme"
 )
@@ -28,12 +29,12 @@ func CopyButton(c *ui.Context, content string, p CopyButtonProps) ui.Element {
 		b.Jump("copied", 1)
 	}
 	copied := b.AnimateTo("copied", 0, ui.Animation{Duration: copiedFor}) > 0
-	icon, title := p.Icon, "Copy"
+	icon, title := p.Icon, l10n.Text(c, "copy")
 	if icon == nil {
 		icon = lucide.Copy()
 	}
 	if copied {
-		icon, title = lucide.Check(), "Copied"
+		icon, title = lucide.Check(), l10n.Text(c, "copied")
 	}
 	return StyleActionIcon(c, b, icon, ActionIconProps{Variant: p.Variant, Size: p.Size, Title: title, Active: copied})
 }

@@ -6,6 +6,7 @@ import (
 	"github.com/egoist/mygo/ui"
 	"github.com/lobehub/lobe-mygo/pkg/action"
 	"github.com/lobehub/lobe-mygo/pkg/display"
+	"github.com/lobehub/lobe-mygo/pkg/internal/l10n"
 	"github.com/lobehub/lobe-mygo/pkg/lucide"
 	"github.com/lobehub/lobe-mygo/pkg/theme"
 )
@@ -82,7 +83,7 @@ func HotkeyInput(c *ui.Context, value *string, p HotkeyInputProps) ui.Element {
 				if *value == "" {
 					placeholder := p.Placeholder
 					if placeholder == "" {
-						placeholder = "Press keys to record shortcut"
+						placeholder = l10n.Text(c, "hotkeyPlaceholder")
 					}
 					ui.Text(c, placeholder).TextColor(tk.TextDescription).SingleLine()
 					return
@@ -94,12 +95,12 @@ func HotkeyInput(c *ui.Context, value *string, p HotkeyInputProps) ui.Element {
 			}
 			ui.Row(c).Gap(4).Margin(0, -6, 0, 0).Children(func() {
 				if p.ResetValue != "" && *value != p.ResetValue {
-					if action.ActionIcon(c, lucide.Undo2(), action.ActionIconProps{Size: theme.Small, Variant: action.ActionIconFilled, Title: "Reset to default"}).Clicked() {
+					if action.ActionIcon(c, lucide.Undo2(), action.ActionIconProps{Size: theme.Small, Variant: action.ActionIconFilled, Title: l10n.Text(c, "hotkeyReset")}).Clicked() {
 						*value, rec.invalid, rec.conflict = p.ResetValue, false, false
 					}
 				}
 				if p.AllowClear {
-					if action.ActionIcon(c, lucide.X(), action.ActionIconProps{Size: theme.Small, Variant: action.ActionIconFilled, Title: "Clear binding"}).Clicked() {
+					if action.ActionIcon(c, lucide.X(), action.ActionIconProps{Size: theme.Small, Variant: action.ActionIconFilled, Title: l10n.Text(c, "hotkeyClear")}).Clicked() {
 						*value, rec.invalid, rec.conflict = "", false, false
 					}
 				}
@@ -111,9 +112,9 @@ func HotkeyInput(c *ui.Context, value *string, p HotkeyInputProps) ui.Element {
 		}
 		switch {
 		case rec.conflict:
-			ui.Text(c, "This shortcut conflicts with an existing one.").FontSize(12).TextColor(tk.Error)
+			ui.Text(c, l10n.Text(c, "hotkeyConflict")).FontSize(12).TextColor(tk.Error)
 		case rec.invalid:
-			ui.Text(c, "Shortcut must include a modifier key (Ctrl, Alt, Shift) and only one regular key.").FontSize(12).TextColor(tk.Error)
+			ui.Text(c, l10n.Text(c, "hotkeyInvalid")).FontSize(12).TextColor(tk.Error)
 		}
 	})
 	return control

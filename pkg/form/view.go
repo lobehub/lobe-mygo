@@ -6,6 +6,7 @@ import (
 
 	"github.com/egoist/mygo/ui"
 	"github.com/lobehub/lobe-mygo/pkg/display"
+	"github.com/lobehub/lobe-mygo/pkg/internal/l10n"
 	"github.com/lobehub/lobe-mygo/pkg/theme"
 )
 
@@ -35,8 +36,12 @@ type Props[T any] struct {
 	Variant Variant
 	// Layout puts labels beside their controls (Horizontal) or above them (Vertical).
 	Layout Layout
-	// ItemMinWidth is the least width of a control beside its label.
-	ItemMinWidth float32
+	// ItemMinWidth is the least width of a control beside its label; ItemMinWidthPercent, as a
+	// percent of the field's row, raises it on wide rows, as Lobe UI's max(34%, 240px).
+	ItemMinWidth        float32
+	ItemMinWidthPercent float32
+	// Gap spaces the groups: 16 DIPs, or 48 when Borderless, when zero.
+	Gap float32
 	// ValidateOn is when fields check their values; ValidateAuto by default.
 	ValidateOn ValidateOn
 	// OnSubmit gets the values once every field is valid. The values become the form's baseline
@@ -57,8 +62,9 @@ func View[T any](c *ui.Context, f *Form[T], p Props[T], content func()) ui.Eleme
 	if layout == LayoutAuto {
 		layout = Horizontal
 	}
-	h.view = viewSettings{variant: p.Variant, layout: layout, itemMinWidth: p.ItemMinWidth, validateOn: p.ValidateOn}
+	h.view = viewSettings{variant: p.Variant, layout: layout, itemMinWidth: p.ItemMinWidth, itemMinWidthPercent: p.ItemMinWidthPercent, validateOn: p.ValidateOn}
 	h.order = h.order[:0]
+	h.groupFields = 0
 	for _, fs := range h.fields {
 		fs.registered = false
 	}
@@ -68,9 +74,13 @@ func View[T any](c *ui.Context, f *Form[T], p Props[T], content func()) ui.Eleme
 		h.submitting = true
 	}
 
-	gap := float32(16)
-	if p.Variant == Borderless {
+	gap := p.Gap
+	switch {
+	case gap > 0:
+	case p.Variant == Borderless:
 		gap = 48
+	default:
+		gap = 16
 	}
 	root := ui.Column(c).Gap(gap).AlignSelf(ui.Stretch)
 	root.Children(content)
@@ -146,8 +156,12 @@ func Field(c *ui.Context, f Host, p FieldProps, control func()) ui.Element {
 	if layout == LayoutAuto {
 		layout = h.view.layout
 	}
-	if h.groupFields > 0 && h.view.variant != Borderless {
-		ui.Box(c.Key("divider-" + p.Name)).Height(1).AlignSelf(ui.Stretch).Background(tk.BorderSecondary.Alpha(0.66))
+	if h.groupFields > 0 {
+		line := tk.BorderSecondary.Alpha(0.66)
+		if h.view.variant == Borderless {
+			line = line.Alpha(0)
+		}
+		ui.Box(c.Key("divider-" + p.Name)).Height(1).AlignSelf(ui.Stretch).Background(line)
 	}
 	h.groupFields++
 
@@ -170,12 +184,22 @@ func Field(c *ui.Context, f Host, p FieldProps, control func()) ui.Element {
 			col.AlignItems(ui.Stretch).AlignSelf(ui.Stretch)
 		} else {
 			col.AlignItems(ui.End).Shrink(0)
-			if w := max(p.MinWidth, h.view.itemMinWidth); w > 0 {
+			w := p.MinWidth
+			if w <= 0 {
+				w = max(h.view.itemMinWidth, root.LayoutBounds().W*h.view.itemMinWidthPercent/100)
+				if h.view.itemMinWidthPercent > 0 && root.LayoutBounds().W <= 0 {
+					c.Invalidate()
+				}
+			}
+			if w > 0 {
 				col.MinWidth(w)
 			}
 		}
 		var fs *fieldState
 		if p.Name != "" {
+			if p.RequiredText == "" {
+				p.RequiredText = l10n.Text(c, "formRequired")
+			}
 			fs = h.observe(p.Name, p, col.FocusWithin())
 		}
 		col.Children(func() {
@@ -192,20 +216,20 @@ func Field(c *ui.Context, f Host, p FieldProps, control func()) ui.Element {
 }
 
 func fieldTitle(c *ui.Context, tk *theme.Tokens, p FieldProps) ui.Element {
-	return ui.Column(c).Gap(4).Children(func() {
+	return ui.Column(c).Gap(8).Children(func() {
 		if p.Label != "" {
 			ui.Row(c).Gap(8).AlignItems(ui.Center).Children(func() {
-				ui.Text(c, p.Label).FontSize(14).TextColor(tk.Text)
+				ui.Text(c, p.Label).FontSize(14).FontWeight(500).TextColor(tk.Text)
 				if p.Required {
 					ui.Text(c, "*").FontSize(14).TextColor(tk.Error)
 				}
 				if p.Tag != "" {
-					display.Tag(c, p.Tag, display.TagProps{Size: theme.Small})
+					display.Tag(c, p.Tag, display.TagProps{Size: theme.Middle})
 				}
 			})
 		}
 		if p.Desc != "" {
-			ui.Text(c, p.Desc).FontSize(12).LineHeight(1.5).TextColor(tk.TextDescription)
+			ui.Text(c, p.Desc).FontSize(12).LineHeight(1.44).TextColor(tk.TextDescription)
 		}
 	})
 }

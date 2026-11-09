@@ -2,6 +2,7 @@ package nav
 
 import (
 	"github.com/egoist/mygo/ui"
+	"github.com/lobehub/lobe-mygo/pkg/internal/l10n"
 	"github.com/lobehub/lobe-mygo/pkg/lucide"
 	"github.com/lobehub/lobe-mygo/pkg/theme"
 )
@@ -26,7 +27,7 @@ type BreadcrumbProps struct {
 // in text color, each item a button when it has OnClick.
 func Breadcrumb(c *ui.Context, p BreadcrumbProps) ui.Element {
 	tk := theme.TokensOf(c)
-	root := ui.Row(c).Label("breadcrumb").Gap(4).AlignItems(ui.Center).Wrap().FontSize(14).LineHeight(1.5)
+	root := ui.Row(c).Label(l10n.Text(c, "breadcrumb")).Gap(4).AlignItems(ui.Center).Wrap().FontSize(14).LineHeight(1.5)
 	root.Children(func() {
 		for i, it := range p.Items {
 			last := i == len(p.Items)-1

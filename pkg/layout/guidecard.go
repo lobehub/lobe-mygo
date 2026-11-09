@@ -3,6 +3,7 @@ package layout
 import (
 	"github.com/egoist/mygo/ui"
 	"github.com/lobehub/lobe-mygo/pkg/action"
+	"github.com/lobehub/lobe-mygo/pkg/internal/l10n"
 	"github.com/lobehub/lobe-mygo/pkg/lucide"
 	"github.com/lobehub/lobe-mygo/pkg/theme"
 )
@@ -68,7 +69,7 @@ func GuideCard(c *ui.Context, p GuideCardProps) ui.Element {
 			}
 		})
 		if !p.NoClose {
-			if action.ActionIcon(c, lucide.X(), action.ActionIconProps{Size: theme.Small}).Label("Close").
+			if action.ActionIcon(c, lucide.X(), action.ActionIconProps{Size: theme.Small}).Label(l10n.Text(c, "close")).
 				Absolute().Top(8).Right(8).Clicked() {
 				*closed = true
 				if p.OnClose != nil {

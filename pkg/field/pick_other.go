@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/egoist/mygo"
+	"github.com/lobehub/lobe-mygo/pkg/internal/l10n"
 )
 
 // PickFiles shows the system's open dialog for o and returns the files chosen, nil when canceled.
@@ -27,7 +28,7 @@ func acceptFilters(accept string) []mygo.FileFilter {
 	if len(patterns) == 0 {
 		return nil
 	}
-	f := mygo.FileFilter{Name: "Accepted files"}
+	f := mygo.FileFilter{Name: l10n.AppText("acceptedFiles")}
 	for _, p := range patterns {
 		if ext, ok := strings.CutPrefix(p, "."); ok {
 			f.Extensions = append(f.Extensions, ext)

@@ -1,6 +1,7 @@
 package display
 
 import (
+	"github.com/lobehub/lobe-mygo/pkg/internal/l10n"
 	"github.com/lobehub/lobe-mygo/pkg/theme"
 	"math"
 	"strings"
@@ -107,7 +108,7 @@ func Tag(c *ui.Context, label string, p TagProps) ui.Element {
 		}
 		ui.Text(c, label).SingleLine()
 		if p.Closable {
-			closeButton := ui.ButtonBase(c).Label("Close").Cursor(ui.CursorPointer)
+			closeButton := ui.ButtonBase(c).Label(l10n.Text(c, "close")).Cursor(ui.CursorPointer)
 			glyph := tk.Icon
 			if closeButton.Hovered() {
 				glyph = tk.TextHeading

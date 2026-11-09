@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/egoist/mygo/ui"
+	"github.com/lobehub/lobe-mygo/pkg/internal/l10n"
 	"github.com/lobehub/lobe-mygo/pkg/motion"
 	"github.com/lobehub/lobe-mygo/pkg/theme"
 )
@@ -209,7 +210,7 @@ func (v *imageViewer) build(c *ui.Context, tk *theme.Tokens, host ui.Element, it
 			k := switchFromScale + (1-switchFromScale)*arrival
 			ui.Image(c.Key(v.index), item.src).Absolute().Left(shown.X).Top(shown.Y).Size(shown.W, shown.H).
 				Fit(ui.Cover).Rotate(angle).Scale(k, k).Opacity(min(1, arrival*2)).
-				Label("Image preview").IgnoreInput(true)
+				Label(l10n.Text(c, "imagePreview")).IgnoreInput(true)
 			ui.Box(c).Absolute().Left(0).Top(0).Right(0).Bottom(0).Opacity(chrome).IgnoreInput(chrome == 0).
 				Children(func() { usedChrome = v.chrome(c, tk, items, fit) })
 		})

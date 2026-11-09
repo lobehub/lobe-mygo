@@ -61,10 +61,13 @@ func Group(c *ui.Context, f Host, p GroupProps, content func()) ui.Element {
 	root.Children(func() {
 		col := ui.CollapsibleBase(c, &st.open)
 		progress := col.Progress()
+		if p.Title == "" {
+			col.Trigger.Disabled(true).Hidden(true)
+		}
 		tr := col.Trigger.Row().Gap(12).AlignItems(ui.Center).Justify(ui.SpaceBetween).Padding(16).AlignSelf(ui.Stretch).
 			Cursor(ui.CursorPointer)
 		if p.Fixed {
-			tr.Disabled(true).Cursor(ui.CursorDefault)
+			tr.Disabled(true).DimDisabled(false).Cursor(ui.CursorDefault)
 		}
 		tr.Children(func() {
 			ui.Row(c).Gap(12).AlignItems(ui.Center).Children(func() {
@@ -96,11 +99,13 @@ func Group(c *ui.Context, f Host, p GroupProps, content func()) ui.Element {
 }
 
 func groupTitle(c *ui.Context, tk *theme.Tokens, p GroupProps, size float32) {
-	ui.Row(c).Gap(8).AlignItems(ui.Center).Shrink(0).Children(func() {
-		if p.Icon != nil {
-			ui.Icon(c, p.Icon).FontSize(size).TextColor(tk.Text)
-		}
-		ui.Text(c, p.Title).FontSize(size).FontWeight(700).TextColor(tk.Text)
+	ui.Column(c).Shrink(0).Children(func() {
+		ui.Row(c).Gap(8).AlignItems(ui.Center).Children(func() {
+			if p.Icon != nil {
+				ui.Icon(c, p.Icon).FontSize(size).TextColor(tk.Text)
+			}
+			ui.Text(c, p.Title).FontSize(size).FontWeight(700).TextColor(tk.Text)
+		})
 		if p.Desc != "" {
 			ui.Text(c, p.Desc).FontSize(12).TextColor(tk.TextDescription)
 		}

@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/egoist/mygo/ui"
+	"github.com/lobehub/lobe-mygo/pkg/internal/l10n"
 	"github.com/lobehub/lobe-mygo/pkg/lucide"
 	"github.com/lobehub/lobe-mygo/pkg/theme"
 )
@@ -174,7 +175,7 @@ func styleDragger(c *ui.Context, tk *theme.Tokens, b ui.Element, p UploadProps, 
 	}
 	title := p.Title
 	if title == "" {
-		title = "Click or drag file to this area to upload"
+		title = l10n.Text(c, "uploadTitle")
 	}
 	b.Children(func() {
 		ui.Icon(c, lucide.Upload()).FontSize(24).TextColor(tk.TextTertiary)

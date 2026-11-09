@@ -3,6 +3,7 @@ package code
 import (
 	"github.com/egoist/mygo/ui"
 	"github.com/lobehub/lobe-mygo/pkg/feedback"
+	"github.com/lobehub/lobe-mygo/pkg/internal/l10n"
 	"github.com/lobehub/lobe-mygo/pkg/lucide"
 	"github.com/lobehub/lobe-mygo/pkg/theme"
 	"rsc.io/qr"
@@ -165,11 +166,11 @@ func QRCode(c *ui.Context, value string, p QRCodeProps) ui.Element {
 		switch p.Status {
 		case QRLoading:
 			qrOverlay(c).Children(func() {
-				feedback.Spin(c, feedback.SpinProps{}, nil).Label("Loading").AlignSelf(ui.Center).TextColor(ui.Hex("#666666"))
+				feedback.Spin(c, feedback.SpinProps{}, nil).Label(l10n.Text(c, "loading")).AlignSelf(ui.Center).TextColor(ui.Hex("#666666"))
 			})
 		case QRExpired:
 			qrOverlay(c).Children(func() {
-				ui.Text(c, "Expired").FontSize(17).FontWeight(600)
+				ui.Text(c, l10n.Text(c, "qrExpired")).FontSize(17).FontWeight(600)
 				if p.OnRefresh != nil {
 					qrRefresh(c, p.OnRefresh)
 				}
@@ -184,13 +185,14 @@ func qrOverlay(c *ui.Context) ui.Element {
 }
 
 func qrRefresh(c *ui.Context, onRefresh func()) {
-	b := ui.ButtonBase(c).Label("Refresh").Row().Gap(6).AlignItems(ui.Center).Height(32).PaddingX(14).Radius(999).
+	refresh := l10n.Text(c, "refresh")
+	b := ui.ButtonBase(c).Label(refresh).Row().Gap(6).AlignItems(ui.Center).Height(32).PaddingX(14).Radius(999).
 		Background(ui.Hex("#080808")).TextColor(ui.RGB(255, 255, 255)).FontSize(13).FontWeight(500).Cursor(ui.CursorPointer)
 	if b.Clicked() {
 		onRefresh()
 	}
 	b.Children(func() {
 		ui.Icon(c, lucide.RotateCw()).FontSize(14)
-		ui.Text(c, "Refresh")
+		ui.Text(c, refresh)
 	})
 }

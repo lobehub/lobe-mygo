@@ -2,6 +2,7 @@ package action
 
 import (
 	"github.com/egoist/mygo/ui"
+	"github.com/lobehub/lobe-mygo/pkg/internal/l10n"
 	"github.com/lobehub/lobe-mygo/pkg/lucide"
 	"github.com/lobehub/lobe-mygo/pkg/overlay"
 	"github.com/lobehub/lobe-mygo/pkg/theme"
@@ -88,7 +89,7 @@ func ActionIconGroup(c *ui.Context, p ActionIconGroupProps) string {
 				*open = false
 			}
 			mp := icon
-			mp.Title, mp.Active = "More", *open
+			mp.Title, mp.Active = l10n.Text(c, "more"), *open
 			if k := overlay.DropdownMenu(c, open, overlay.DropdownMenuProps{Items: p.Menu}, func(t ui.Element) {
 				StyleActionIcon(c, t.Disabled(p.Disabled), lucide.Ellipsis(), mp)
 			}); k != "" {

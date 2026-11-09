@@ -7,6 +7,7 @@ import (
 	"github.com/egoist/mygo/ui"
 	"github.com/lobehub/lobe-mygo/pkg/action"
 	"github.com/lobehub/lobe-mygo/pkg/display"
+	"github.com/lobehub/lobe-mygo/pkg/internal/l10n"
 	"github.com/lobehub/lobe-mygo/pkg/lucide"
 	"github.com/lobehub/lobe-mygo/pkg/motion"
 	"github.com/lobehub/lobe-mygo/pkg/theme"
@@ -63,7 +64,7 @@ type highlighted struct {
 func Highlighter(c *ui.Context, src string, p HighlighterProps) ui.Element {
 	tk := theme.TokensOf(c)
 	src = strings.TrimRight(strings.TrimLeft(src, "\r\n"), " \t\r\n")
-	root := ui.Column(c).AlignSelf(ui.Stretch).Radius(tk.BorderRadius).Clip().Role(ui.RoleGroup).Label(groupLabel(p.Language))
+	root := ui.Column(c).AlignSelf(ui.Stretch).Radius(tk.BorderRadius).Clip().Role(ui.RoleGroup).Label(groupLabel(c, p.Language))
 	switch p.Variant {
 	case Filled:
 		root.Background(tk.FillQuaternary)
@@ -110,11 +111,11 @@ func actions(c *ui.Context, src string, p HighlighterProps) {
 	}
 }
 
-func groupLabel(lang string) string {
+func groupLabel(c *ui.Context, lang string) string {
 	if lang == "" {
-		return "Code"
+		return l10n.Text(c, "code")
 	}
-	return "Code, " + LanguageName(lang)
+	return l10n.Format(c, "codeLanguage", map[string]any{"language": LanguageName(lang)})
 }
 
 func fontSize(size float32) float32 {
@@ -152,9 +153,9 @@ func fullFeatured(c *ui.Context, tk *theme.Tokens, root ui.Element, src string, 
 	if name == "" {
 		name = LanguageName(p.Language)
 	}
-	label := "Collapse"
+	label := l10n.Text(c, "collapse")
 	if !*open {
-		label = "Expand"
+		label = l10n.Text(c, "expand")
 	}
 	root.Children(func() {
 		var col ui.CollapsibleParts
