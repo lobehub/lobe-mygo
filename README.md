@@ -108,6 +108,10 @@ func main() {
 
 Call `theme.Apply(c)` at the top of each view, then read design tokens with `theme.TokensOf(c)`.
 
+To start a whole app, copy [`examples/desktop`](./examples/desktop): a skeleton desktop window with a title bar, tabs with history, a resizable sidebar, a content card and a settings form, styled after the LobeHub desktop app. Run it with `go run ./examples/desktop`.
+
+Components speak English and Simplified Chinese, in the language the app shows: an app that ships `zh-Hans` in its [MyGo catalogs](https://github.com/egoist/mygo/blob/main/docs/i18n.md) gets them in Chinese, and changes or translates any of their texts with `lobe.<key>` keys (see [`pkg/internal/l10n/messages/en.json`](./pkg/internal/l10n/messages/en.json)). The starter shows both, with a language switch in Settings.
+
 <div align="right">
 
 [![][back-to-top]](#readme-top)
@@ -180,6 +184,7 @@ $ cd lobe-mygo
 $ go test ./...
 $ go run ./catalog            # native catalog window
 $ go run ./catalog button/basic
+$ go run ./examples/desktop    # desktop app starter
 $ bun install && bun run dev  # docs site with WebAssembly demos
 ```
 
