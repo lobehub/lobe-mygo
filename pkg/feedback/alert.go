@@ -41,6 +41,9 @@ type AlertProps struct {
 	// Closed, if set, shows a close button, which sets *Closed to true; the alert shows nothing
 	// while it is true.
 	Closed *bool
+	// Selectable lets people select and copy the title and description, for a message they may
+	// pass on, such as an error's details.
+	Selectable bool
 }
 
 var closeTransition = ui.ElementTransition{Duration: 160 * time.Millisecond, Ease: motion.EaseOut, Colors: true}
@@ -82,9 +85,15 @@ func Alert(c *ui.Context, title string, p AlertProps) ui.Element {
 			})
 		}
 		ui.Column(c).Grow(1).MinWidth(0).Children(func() {
-			ui.Text(c, title).FontWeight(500).LineHeight(20.0 / 14)
+			heading := ui.Text(c, title).FontWeight(500).LineHeight(20.0 / 14)
+			if p.Selectable {
+				heading.Selectable()
+			}
 			if detailed {
-				ui.Text(c, p.Description).FontSize(13).LineHeight(20.0 / 13).TextColor(tk.TextSecondary)
+				description := ui.Text(c, p.Description).FontSize(13).LineHeight(20.0 / 13).TextColor(tk.TextSecondary)
+				if p.Selectable {
+					description.Selectable()
+				}
 			}
 		})
 		if p.Closed != nil && closeButton(c, tk).Clicked() {

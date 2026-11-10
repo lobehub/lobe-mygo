@@ -10,7 +10,7 @@ func elevatedPixels(t *testing.T, dark bool, level Elevation) (bg, aboveTop, bel
 	t.Helper()
 	tt := ui.NewTester(func(c *ui.Context) {
 		if dark {
-			c.SetTheme(darkTheme)
+			c.SetTheme(Default().Theme(true))
 		}
 		Apply(c)
 		tk := TokensOf(c)

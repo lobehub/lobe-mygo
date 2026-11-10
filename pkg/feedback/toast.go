@@ -250,7 +250,7 @@ func toastAction(c *ui.Context, tk *theme.Tokens, b ui.Element, label string) {
 	case b.Hovered():
 		bg = tk.PrimaryHover
 	}
-	b.Height(28).PaddingX(12).Radius(tk.BorderRadiusSM).Background(bg).TextColor(tk.BgLayout).
+	b.Height(28).PaddingX(12).Radius(tk.BorderRadiusSM).Background(bg).TextColor(tk.PrimaryForeground).
 		FontSize(12).FontWeight(500).Cursor(ui.CursorPointer).Transition(dialogCloseTransition)
 	b.Children(func() { ui.Text(c, label).SingleLine() })
 }

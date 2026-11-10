@@ -109,3 +109,30 @@ func TestButtonReportsClicked(t *testing.T) {
 		t.Error("Clicked() did not report the click")
 	}
 }
+
+func TestPrimaryButtonDrawsAConfigsBrand(t *testing.T) {
+	light, dark := *theme.Light(), *theme.Dark()
+	light.Primary, dark.Primary = ui.Hex("#0559ff"), ui.Hex("#1e61e6")
+	light.PrimaryForeground, dark.PrimaryForeground = light.TextLightSolid, dark.TextLightSolid
+	cfg := theme.NewConfig(light, dark)
+	tt := ui.NewTester(func(c *ui.Context) {
+		cfg.Apply(c)
+		ui.Column(c).Fill().Center().Children(func() { Button(c, "Save", ButtonProps{Variant: Primary}) })
+	}, 320, 200)
+	for _, isDark := range []bool{false, true} {
+		tt.SetDark(isDark)
+		tt.Advance(time.Second)
+		info, ok := tt.AccessByRole(ui.RoleButton, "Save")
+		if !ok {
+			t.Fatal("no button named Save")
+		}
+		b := info.Bounds
+		want := cfg.Tokens(isDark)
+		if got := testkit.PixelAt(tt, 320, b.X+5, b.Y+b.H/2); !testkit.Near(got, want.Primary) {
+			t.Errorf("dark=%v fill = %+v, want brand Primary %+v", isDark, got, want.Primary)
+		}
+		if got := testkit.Ink(tt, 320, b, want.Primary); !testkit.Near(got, want.PrimaryForeground) {
+			t.Errorf("dark=%v label = %+v, want PrimaryForeground %+v", isDark, got, want.PrimaryForeground)
+		}
+	}
+}

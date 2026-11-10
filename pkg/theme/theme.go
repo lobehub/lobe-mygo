@@ -47,7 +47,7 @@ func (t *Tokens) Theme() *ui.Theme {
 		Accent:          t.Primary,
 		AccentHover:     t.PrimaryHover,
 		AccentPressed:   t.PrimaryActive,
-		AccentText:      t.BgLayout,
+		AccentText:      t.PrimaryForeground,
 		Danger:          t.Error,
 		Warning:         t.Warning,
 		Success:         t.Success,

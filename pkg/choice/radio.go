@@ -65,7 +65,7 @@ func Radio[T comparable](c *ui.Context, selected *T, value T, label string, p Ra
 		circle.Children(func() {
 			if scale > 0 {
 				dot := float32(int(size*0.375 + 0.5))
-				ui.Box(c).Size(dot, dot).Radius(dot/2).Background(tk.BgLayout).Scale(scale, scale)
+				ui.Box(c).Size(dot, dot).Radius(dot/2).Background(tk.PrimaryForeground).Scale(scale, scale)
 			}
 		})
 		if label != "" {

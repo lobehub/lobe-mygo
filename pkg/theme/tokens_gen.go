@@ -172,6 +172,7 @@ type Tokens struct {
 	OrangeActive           ui.Color
 	OrangeFillQuaternary   ui.Color
 	OrangeFillTertiary     ui.Color
+	PrimaryForeground      ui.Color
 	Purple                 ui.Color
 	Purple8                ui.Color
 	Purple9                ui.Color
@@ -382,6 +383,7 @@ var lightTokens = Tokens{
 	OrangeActive:           ui.RGB(209, 128, 0),
 	OrangeFillQuaternary:   ui.RGBA(255, 105, 255, 0.03),
 	OrangeFillTertiary:     ui.RGBA(255, 80, 30, 0.08),
+	PrimaryForeground:      ui.RGB(248, 248, 248),
 	Purple:                 ui.RGB(189, 84, 198),
 	Purple8:                ui.RGB(203, 110, 210),
 	Purple9:                ui.RGB(189, 84, 198),
@@ -592,6 +594,7 @@ var darkTokens = Tokens{
 	OrangeActive:           ui.RGB(232, 139, 0),
 	OrangeFillQuaternary:   ui.RGBA(233, 100, 0, 0.03),
 	OrangeFillTertiary:     ui.RGBA(241, 147, 0, 0.17),
+	PrimaryForeground:      ui.RGB(0, 0, 0),
 	Purple:                 ui.RGB(189, 84, 198),
 	Purple8:                ui.RGB(171, 70, 178),
 	Purple9:                ui.RGB(189, 84, 198),
@@ -756,6 +759,7 @@ var colorTokenNames = []string{
 	"WarningTextActive",
 	"WarningTextHover",
 	"White",
+	"PrimaryForeground",
 }
 
 func (t *Tokens) Color(name string) (ui.Color, bool) {
@@ -1092,6 +1096,8 @@ func (t *Tokens) Color(name string) (ui.Color, bool) {
 		return t.OrangeFillQuaternary, true
 	case "OrangeFillTertiary":
 		return t.OrangeFillTertiary, true
+	case "PrimaryForeground":
+		return t.PrimaryForeground, true
 	case "Purple":
 		return t.Purple, true
 	case "Purple8":

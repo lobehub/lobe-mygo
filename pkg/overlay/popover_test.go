@@ -93,3 +93,25 @@ func TestPopoverAnimatesOutAfterClosing(t *testing.T) {
 		t.Errorf("panel still painted %+v after its exit", got)
 	}
 }
+
+func TestPopoverPanelTakesTheWindowsConfig(t *testing.T) {
+	light, dark := *theme.Light(), *theme.Dark()
+	light.BgElevated = ui.Hex("#f2f4f8")
+	cfg := theme.NewConfig(light, dark)
+	open := true
+	tt := ui.NewTester(func(c *ui.Context) {
+		cfg.Apply(c)
+		ui.Column(c).Fill().Center().Padding(20).Children(func() {
+			anchor := ui.ButtonBase(c).Size(80, 32).Background(ui.RGB(200, 200, 200)).Label("Share")
+			Popover(c, anchor, &open, PopoverProps{Placement: Bottom}, func() { ui.Text(c, "Invite people") })
+		})
+	}, 400, 300)
+	tt.Advance(time.Second)
+	r, ok := tt.Find("Invite people")
+	if !ok {
+		t.Fatal("no content")
+	}
+	if got := testkit.PixelAt(tt, 400, r.X-6, r.Y+r.H/2); !testkit.Near(got, light.BgElevated) {
+		t.Errorf("panel = %+v, want the Config's BgElevated %+v", got, light.BgElevated)
+	}
+}

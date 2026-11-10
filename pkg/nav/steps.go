@@ -146,7 +146,7 @@ func stepIndicator(c *ui.Context, tk *theme.Tokens, i int, it StepItem, status S
 	case StepFinish:
 		border, fg = tk.Primary, tk.Primary
 	case StepProcess:
-		border, fg = tk.Primary, tk.BgContainer
+		border, fg = tk.Primary, tk.PrimaryForeground
 		ind.Background(tk.Primary)
 	case stepGuide:
 		fg = tk.TextSecondary

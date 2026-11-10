@@ -52,7 +52,7 @@ func TestThemeMapsLobeTokensOntoMygoTheme(t *testing.T) {
 			{"Accent", th.Accent, tk.Primary},
 			{"AccentHover", th.AccentHover, tk.PrimaryHover},
 			{"AccentPressed", th.AccentPressed, tk.PrimaryActive},
-			{"AccentText", th.AccentText, tk.BgLayout},
+			{"AccentText", th.AccentText, tk.PrimaryForeground},
 			{"Border", th.Border, tk.FillBorder()},
 			{"Danger", th.Danger, tk.Error},
 			{"Focus", th.Focus, tk.Info.Alpha(0.9)},

@@ -9,6 +9,29 @@ import swatches from './swatches.go?raw';
 
 `scripts/gen-tokens.ts` generates `pkg/theme/tokens_gen.go` from `@lobehub/ui`. `theme.TokensOf(c)` returns the light or dark set the window uses, and `Color(name)` looks one up by name.
 
+## Your Own Tokens
+
+An app with its own brand makes a `theme.Config` from a light and a dark set of tokens, once, and applies it in place of `theme.Apply`. Every component then draws with those tokens, in the window, in a `ui.Themed` subtree built with `cfg.Theme(dark)`, and in the popovers, menus and dialogs they open.
+
+```go
+var brand = func() *theme.Config {
+	light, dark := *theme.Light(), *theme.Dark()
+	// Set the whole primary family: Lobe UI's dark PrimaryHover and
+	// PrimaryActive are near white, which a light label would vanish on.
+	light.Primary, light.PrimaryHover, light.PrimaryActive = ui.Hex("#0559ff"), ui.Hex("#044ee0"), ui.Hex("#0343c2")
+	dark.Primary, dark.PrimaryHover, dark.PrimaryActive = ui.Hex("#1e61e6"), ui.Hex("#1c5ad6"), ui.Hex("#174bb3")
+	light.PrimaryForeground, dark.PrimaryForeground = light.TextLightSolid, dark.TextLightSolid
+	return theme.NewConfig(light, dark)
+}()
+
+func view(c *ui.Context) {
+	brand.Apply(c)
+	// ...
+}
+```
+
+`PrimaryForeground` is the text and glyphs on a solid `Primary` surface: primary buttons, checked boxes and radios, the current step, toast actions. Lobe UI uses the layout background there; a saturated brand primary takes `TextLightSolid` instead, as a web app does when it gives its primary buttons a light label.
+
 ## Semantic Colors
 
 <GoDemo name="tokens/swatches" title="Semantic colors" height={640} scrollable source={swatches} />

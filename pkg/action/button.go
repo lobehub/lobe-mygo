@@ -107,7 +107,7 @@ func buttonColors(tk *theme.Tokens, v ButtonVariant, s buttonState) (bg, border,
 	switch v {
 	case Primary:
 		c := pick(tk.Primary, tk.PrimaryHover, tk.PrimaryActive)
-		return c, c, tk.BgLayout
+		return c, c, tk.PrimaryForeground
 	case Filled:
 		return pick(tk.FillTertiary, tk.FillSecondary, tk.Fill), ui.Transparent, tk.Text
 	case Text:

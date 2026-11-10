@@ -66,7 +66,7 @@ func Checkbox(c *ui.Context, checked *bool, label string, p CheckboxProps) ui.El
 
 	row.Children(func() {
 		box := ui.Box(c).Size(size, size).Radius(radius).Border(1, border).Background(bg).
-			TextColor(tk.BgLayout).Center().Transition(checkboxTransition)
+			TextColor(tk.PrimaryForeground).Center().Transition(checkboxTransition)
 		box.Children(func() {
 			switch state {
 			case ui.CheckOn:

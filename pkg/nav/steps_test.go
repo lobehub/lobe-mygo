@@ -71,3 +71,27 @@ func TestVerticalNavLeavesNoStrayElement(t *testing.T) {
 		t.Errorf("%v DIPs between the tabs and the next element, want one 16 DIP gap", gap)
 	}
 }
+
+func TestCurrentStepLabelTakesPrimaryForeground(t *testing.T) {
+	light, dark := *theme.Light(), *theme.Dark()
+	light.Primary, dark.Primary = ui.Hex("#0559ff"), ui.Hex("#1e61e6")
+	light.PrimaryForeground, dark.PrimaryForeground = light.TextLightSolid, dark.TextLightSolid
+	cfg := theme.NewConfig(light, dark)
+	tt := ui.NewTester(func(c *ui.Context) {
+		cfg.Apply(c)
+		ui.Column(c).Padding(20).Width(500).Children(func() {
+			Steps(c, StepsProps{Current: 1, Items: []StepItem{{Title: "Account"}, {Title: "Profile"}, {Title: "Done"}}})
+		})
+	}, 540, 200)
+	for _, isDark := range []bool{false, true} {
+		tt.SetDark(isDark)
+		want := cfg.Tokens(isDark)
+		r, ok := tt.Find("2")
+		if !ok {
+			t.Fatalf("no current step number; texts %q", tt.Texts())
+		}
+		if got := testkit.Ink(tt, 540, r, want.Primary); !testkit.Near(got, want.PrimaryForeground) {
+			t.Errorf("dark=%v current step number = %+v, want PrimaryForeground %+v", isDark, got, want.PrimaryForeground)
+		}
+	}
+}

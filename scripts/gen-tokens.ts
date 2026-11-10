@@ -63,6 +63,24 @@ const metricKeys = Object.keys(light)
   .filter((k) => METRIC.test(k) && typeof light[k] === 'number')
   .sort();
 
+// Derived colors are roles Lobe UI fills from another token rather than
+// naming, kept as fields so an app can set them apart from their source.
+// PrimaryForeground is the text and glyphs on a solid Primary surface: Lobe UI
+// uses the layout background, and an app whose primary is saturated sets it to
+// TextLightSolid.
+const DERIVED: Record<string, string> = {
+  primaryForeground: 'colorBgLayout',
+};
+
+const derivedKeys = Object.keys(DERIVED).sort();
+for (const k of derivedKeys) {
+  if (!colorKeys.includes(DERIVED[k])) throw new Error(`derived ${k}: missing source ${DERIVED[k]}`);
+  light[k] = light[DERIVED[k]];
+  dark[k] = dark[DERIVED[k]];
+}
+colorKeys.push(...derivedKeys);
+colorKeys.sort();
+
 const fields = [...colorKeys, ...metricKeys].map(fieldName);
 const duplicate = fields.find((f, i) => fields.indexOf(f) !== i);
 if (duplicate) throw new Error(`token field collision: ${duplicate}`);

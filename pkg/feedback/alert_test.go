@@ -91,3 +91,33 @@ func TestAlertCloses(t *testing.T) {
 		t.Error("alert without Closed shows a close button")
 	}
 }
+
+func TestSelectableAlertCopiesItsText(t *testing.T) {
+	for _, text := range []string{"Install failed", "exit status 1: disk is full"} {
+		tt := alertTester("Install failed", AlertProps{Type: Error, Description: "exit status 1: disk is full", Selectable: true})
+		r, ok := tt.Find(text)
+		if !ok {
+			t.Fatalf("no %q", text)
+		}
+		tt.RightClickAt(r.X+r.W/2, r.Y+r.H/2)
+		if err := tt.ChooseMenuItem("Select All"); err != nil {
+			t.Fatalf("%q: %v (menu %q)", text, err, tt.Menu())
+		}
+		tt.RightClickAt(r.X+r.W/2, r.Y+r.H/2)
+		if err := tt.ChooseMenuItem("Copy"); err != nil {
+			t.Fatal(err)
+		}
+		if tt.Clipboard() != text {
+			t.Errorf("copied %q, want %q", tt.Clipboard(), text)
+		}
+	}
+}
+
+func TestAlertTextIsNotSelectableByDefault(t *testing.T) {
+	tt := alertTester("Saved", AlertProps{Description: "All changes are stored."})
+	r, _ := tt.Find("Saved")
+	tt.RightClickAt(r.X+r.W/2, r.Y+r.H/2)
+	if err := tt.ChooseMenuItem("Copy"); err == nil {
+		t.Error("a plain alert offered to copy its text")
+	}
+}
