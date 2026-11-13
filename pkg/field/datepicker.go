@@ -66,7 +66,7 @@ func DatePicker(c *ui.Context, value *time.Time, p DatePickerProps) ui.Element {
 		})
 		styleField(trigger, tk, p.Variant, false, *open || trigger.Focused())
 		if clearable {
-			x := ui.ButtonBase(c).Label(l10n.Text(c, "clear")).Absolute().Right(10).Size(16, 16).Radius(8).Center().
+			x := ui.ButtonBase(c).Label(l10n.Text(c, "clear")).Absolute().Right(10).Top(0).Bottom(0).Width(16).Radius(8).Center().
 				Cursor(ui.CursorPointer).TextColor(tk.TextTertiary)
 			if x.Hovered() {
 				x.TextColor(tk.TextSecondary)
