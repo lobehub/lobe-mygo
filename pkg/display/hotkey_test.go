@@ -51,6 +51,41 @@ func TestHotkeyChipsAndCompact(t *testing.T) {
 	}
 }
 
+func TestHotkeySizes(t *testing.T) {
+	tk := theme.Light()
+	chipBg := testkit.Over(tk.BgLayout, tk.FillTertiary)
+	for _, tc := range []struct {
+		name  string
+		size  theme.Size
+		inDy  float32
+		outDy float32
+	}{
+		{"small", theme.Small, 6, 9},
+		{"middle", theme.Middle, 9, 12},
+		{"large", theme.Large, 9, 12},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			tt := hotkeyTester("ctrl+k", HotkeyProps{Platform: HotkeyOther, Compact: true, Size: tc.size})
+			ctrl, ok := tt.Find("Ctrl")
+			if !ok {
+				t.Fatal("missing Ctrl")
+			}
+			cy := ctrl.Y + ctrl.H/2
+			px := ctrl.X + ctrl.W + 2 // between Ctrl and K inside the one chip
+			for _, dy := range []float32{-tc.inDy, tc.inDy} {
+				if got := testkit.PixelAt(tt, 300, px, cy+dy); !testkit.Near(got, chipBg) {
+					t.Errorf("at dy=%v: pixel=%+v, want chipBg %+v", dy, got, chipBg)
+				}
+			}
+			for _, dy := range []float32{-tc.outDy, tc.outDy} {
+				if got := testkit.PixelAt(tt, 300, px, cy+dy); !testkit.Near(got, tk.BgLayout) {
+					t.Errorf("at dy=%v: pixel=%+v, want BgLayout %+v", dy, got, tk.BgLayout)
+				}
+			}
+		})
+	}
+}
+
 func TestParseHotkey(t *testing.T) {
 	for _, c := range []struct {
 		keys  string
