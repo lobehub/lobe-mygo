@@ -8,6 +8,7 @@ import { GoApi } from '../../docs/components/GoApi';
 import { GoDemo } from '../../docs/components/GoDemo';
 import api from './api.json';
 import basic from './basic.go?raw';
+import sizes from './sizes.go?raw';
 import variants from './variants.go?raw';
 
 `display.Hotkey` takes keys joined by `+`, such as `mod+shift+k`. `mod` is Command on Apple devices and Ctrl elsewhere; `Platform` picks the naming, or asks the device when left at `HotkeyAuto`.
@@ -21,6 +22,12 @@ import variants from './variants.go?raw';
 `Compact` puts every key in one cap, as tooltips show them. `Borderless` shows the keys as text.
 
 <GoDemo name="hotkey/variants" title="Variants" height={180} source={variants} />
+
+## Sizes
+
+`Size` accepts `theme.Small` for compact 16 DIP caps inside small inputs.
+
+<GoDemo name="hotkey/sizes" title="Small and default sizes" height={140} source={sizes} />
 
 ## API
 
