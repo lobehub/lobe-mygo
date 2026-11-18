@@ -1,6 +1,7 @@
 package field
 
 import (
+	"fmt"
 	"testing"
 	"time"
 
@@ -72,4 +73,117 @@ func TestSelectPopupMatchesTriggerAndMarksChoice(t *testing.T) {
 	if v != "gpt" {
 		t.Errorf("disabled option chosen: %q", v)
 	}
+}
+
+func TestSelectPopupScrollsAndFitsWindow(t *testing.T) {
+	options := make([]SelectOption, 30)
+	for i := range options {
+		lbl := fmt.Sprintf("Option %02d", i)
+		options[i] = SelectOption{Value: lbl, Label: lbl}
+	}
+	inBox := func(r, box ui.Rect) bool {
+		return r.H > 0 && r.Y >= box.Y && r.Y+r.H <= box.Y+box.H
+	}
+
+	t.Run("wheel_and_keys_in_256_popup", func(t *testing.T) {
+		v := "Option 00"
+		tt := ui.NewTester(func(c *ui.Context) {
+			theme.Apply(c)
+			ui.Column(c).Padding(20).Children(func() {
+				Select(c, &v, SelectProps{Options: options}).Width(240)
+			})
+		}, 400, 400)
+
+		if err := tt.Click("Option 00"); err != nil {
+			t.Fatal(err)
+		}
+		tt.Advance(time.Second)
+		tt.Frame()
+
+		lb := role(t, tt, ui.RoleListBox, "")
+		if lb.H != 256 {
+			t.Fatalf("listbox height = %v, want 256", lb.H)
+		}
+
+		cx, cy := lb.X+lb.W/2, lb.Y+lb.H/2
+		tt.Move(cx, cy)
+		tt.Scroll(cx, cy, 0, 200)
+		tt.Frame()
+		opt08, ok := tt.Find("Option 08")
+		if !ok || !inBox(opt08, lb) {
+			t.Fatalf("Option 08 after wheel scroll = %+v (found %v), want inside listbox %+v", opt08, ok, lb)
+		}
+
+		tt.Key(0, ui.KeyEnd)
+		tt.Frame()
+		opt29, ok := tt.Find("Option 29")
+		if !ok || !inBox(opt29, lb) {
+			t.Fatalf("Option 29 after End = %+v (found %v), want inside listbox %+v", opt29, ok, lb)
+		}
+
+		tt.Key(0, ui.KeyHome)
+		tt.Frame()
+		opt00, ok := tt.AccessByRole(ui.RoleOption, "Option 00")
+		if !ok || !inBox(opt00.Bounds, lb) {
+			t.Fatalf("Option 00 after Home = %+v (found %v), want inside listbox %+v", opt00.Bounds, ok, lb)
+		}
+	})
+
+	t.Run("opens_scrolled_to_selected", func(t *testing.T) {
+		v := "Option 25"
+		tt := ui.NewTester(func(c *ui.Context) {
+			theme.Apply(c)
+			ui.Column(c).Padding(20).Children(func() {
+				Select(c, &v, SelectProps{Options: options}).Width(240)
+			})
+		}, 400, 400)
+
+		if err := tt.Click("Option 25"); err != nil {
+			t.Fatal(err)
+		}
+		tt.Advance(time.Second)
+		tt.Frame()
+
+		lb := role(t, tt, ui.RoleListBox, "")
+		opt25, ok := tt.AccessByRole(ui.RoleOption, "Option 25")
+		if !ok || !inBox(opt25.Bounds, lb) {
+			t.Fatalf("selected Option 25 on open = %+v (found %v), want inside listbox %+v", opt25.Bounds, ok, lb)
+		}
+		opt24, ok := tt.Find("Option 24")
+		if !ok || !inBox(opt24, lb) {
+			t.Fatalf("Option 24 on open = %+v (found %v), want inside listbox %+v", opt24, ok, lb)
+		}
+		tt.ClickAt(opt24.X+opt24.W/2, opt24.Y+opt24.H/2)
+		tt.Advance(time.Second)
+		tt.Frame()
+		if v != "Option 24" {
+			t.Fatalf("selected = %q, want Option 24", v)
+		}
+	})
+
+	t.Run("clamps_to_window_room", func(t *testing.T) {
+		v := "Option 00"
+		tt := ui.NewTester(func(c *ui.Context) {
+			theme.Apply(c)
+			ui.Column(c).Padding(140, 20).Children(func() {
+				Select(c, &v, SelectProps{Options: options}).Width(240)
+			})
+		}, 400, 320)
+
+		if err := tt.Click("Option 00"); err != nil {
+			t.Fatal(err)
+		}
+		tt.Advance(time.Second)
+		tt.Key(0, ui.KeyEnd)
+		tt.Frame()
+
+		lb := role(t, tt, ui.RoleListBox, "")
+		if lb.Y+lb.H > 320-4 {
+			t.Fatalf("listbox %+v overflows 320 DIP window", lb)
+		}
+		opt29, ok := tt.Find("Option 29")
+		if !ok || !inBox(opt29, lb) || opt29.Y+opt29.H > 320-4 {
+			t.Fatalf("Option 29 after End = %+v (found %v), want inside listbox %+v and window", opt29, ok, lb)
+		}
+	})
 }

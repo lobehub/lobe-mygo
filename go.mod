@@ -3,7 +3,7 @@ module github.com/lobehub/lobe-mygo
 go 1.27.3
 
 require (
-	github.com/egoist/mygo v0.8.4-0.20261108082913-9233663736ca
+	github.com/egoist/mygo v0.10.0
 	github.com/makiuchi-d/gozxing v0.1.1
 	rsc.io/qr v0.2.0
 )

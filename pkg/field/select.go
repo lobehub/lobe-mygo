@@ -90,9 +90,11 @@ func Select(c *ui.Context, selected *string, p SelectProps) ui.Element {
 			Background(tk.BgElevated).Transition(motion.Popup()).AttachedOrigin()
 		tk.Elevate(panel, theme.BoxShadowSecondary)
 		panel.Children(func() {
-			for _, o := range p.Options {
-				selectOption(c.Key(o.Value), tk, sel, o, o.Value == *selected)
-			}
+			ui.Scroll(c).Shrink(1).Children(func() {
+				for _, o := range p.Options {
+					selectOption(c.Key(o.Value), tk, sel, o, o.Value == *selected)
+				}
+			})
 		})
 	})
 	return tr
